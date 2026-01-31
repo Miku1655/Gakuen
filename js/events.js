@@ -15,13 +15,47 @@ function triggerRandomEvent() {
         if (c.maxMorale && gameState.moraleTotal > c.maxMorale) return false;
         if (c.yakuza !== undefined && gameState.yakuzaProtection !== c.yakuza) return false;
 
+        // Dodatkowy warunek dla eventów z targetJob
+        if (e.targetJob) {
+            const hasGirlOnJob = gameState.girls.some(g => g.currentJob === e.targetJob);
+            if (!hasGirlOnJob) return false;
+        }
+
         return Math.random() * 100 < (e.chance || 100);
     });
 
     if (!available.length) return;
+
     const event = available[Math.floor(Math.random() * available.length)];
+
+    // ────────────────────────────────────────────────
+    // Obsługa eventów z konkretną dziewczyną
+    // ────────────────────────────────────────────────
+    if (event.targetJob) {
+        const eligibleGirls = gameState.girls.filter(g => 
+            g.currentJob === event.targetJob && g.available
+        );
+
+        if (eligibleGirls.length === 0) return; // safety, choć filtr wyżej powinien to złapać
+
+        const targetGirl = eligibleGirls[Math.floor(Math.random() * eligibleGirls.length)];
+
+        // Tworzymy instancję eventu z danymi konkretnej dziewczyny
+        const eventInstance = {
+            ...event,
+            description: event.templateDescription.replace("{girlName}", targetGirl.name),
+            targetGirlId: targetGirl.id,
+            targetGirlName: targetGirl.name
+        };
+
+        showEvent(eventInstance);
+        return;
+    }
+
+    // Normalne eventy bez konkretnej dziewczyny
     showEvent(event);
 }
+
 
 function showEvent(event) {
     document.getElementById('event-title').textContent = event.title;
