@@ -131,25 +131,37 @@ function selectChoice(event, choice) {
         logEvent(`📰 ${event.title} – ${choice.text}`, 'event');
     }
 
-    // Wspólne dla wszystkich eventów
+// ────────────────────────────────────────────────
+    // Wspólne efekty – niezależnie od typu eventu
+    // ────────────────────────────────────────────────
     if (e.unlockJob && !gameState.unlockedJobs.includes(e.unlockJob)) {
         gameState.unlockedJobs.push(e.unlockJob);
-        logEvent(`🔓 ${JOBS_DATA[e.unlockJob].name}`, 'unlock');
+        logEvent(`🔓 ${JOBS_DATA[e.unlockJob].name} odblokowane`, 'unlock');
     }
-    if (e.addGirl) generateRandomGirl();
 
-    if (event.cooldown) gameState.eventCooldowns[event.id] = event.cooldown;
-    gameState.completedEvents.push(event.id);  // ewentualnie tylko dla oneTime
+    if (e.addGirl) {
+        const newGirl = generateRandomGirl();
+        gameState.girls.push(newGirl);
+        logEvent(`✨ ${newGirl.name} dołączyła do szkoły!`, 'recruit');
+    }
 
+    // cooldown i ukończenie (dla oneTime)
+    if (event.cooldown) {
+        gameState.eventCooldowns[event.id] = event.cooldown;
+    }
+    if (event.oneTime) {
+        gameState.completedEvents.push(event.id);
+    }
+
+    // follow-up tylko dla eventów bez targetGirlId (bo te z dziewczyną mają własny log)
     if (choice.followUpText && !event.targetGirlId) {
         alert(choice.followUpText);
     }
 
     document.getElementById('event-modal').classList.remove('active');
     gameState.isPaused = false;
-    document.getElementById('pause-btn').textContent = '▶ Start';  // ← poprawione, bo wcześniej było na stałe 'Pauza'
+    document.getElementById('pause-btn').textContent = '▶ Start';
     updateAll();
-}
 
 const FIRST_NAMES = ['Hana','Aiko','Yui','Rin','Nao','Saki','Mei','Sakura','Yuki','Akari','Haruka','Miyu','Noa','Hina','Sara','Aya','Emi','Riko','Yuna','Kana'];
 const LAST_NAMES = ['Tanaka','Nakamura','Kobayashi','Sato','Ito','Kato','Suzuki','Yamamoto','Watanabe','Takahashi','Yamada','Sasaki','Yamaguchi','Matsumoto','Inoue'];
