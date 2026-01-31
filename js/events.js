@@ -83,31 +83,90 @@ function selectChoice(event, choice) {
     updateAll();
 }
 
-function addRandomGirl() {
-    const names = ['Hana','Aiko','Yui','Rin','Nao','Saki'];
-    const girl = {
+const FIRST_NAMES = ['Hana','Aiko','Yui','Rin','Nao','Saki','Mei','Sakura','Yuki','Akari','Haruka','Miyu','Noa','Hina','Sara','Aya','Emi','Riko','Yuna','Kana'];
+const LAST_NAMES = ['Tanaka','Nakamura','Kobayashi','Sato','Ito','Kato','Suzuki','Yamamoto','Watanabe','Takahashi','Yamada','Sasaki','Yamaguchi','Matsumoto','Inoue'];
+
+const PERSONALITIES = [
+    {name: "Nieśmiała i wrażliwa",    conversation: [15,35], lewdness: [5,15], grades: [80,98], morale: [45,70], traits: ["virgin","shy","kind"]},
+    {name: "Pewna siebie i ambitna",  conversation: [45,70], lewdness: [15,35], grades: [70,90], morale: [60,85], traits: ["confident","ambitious","athletic"]},
+    {name: "Wesoła i figlarna",       conversation: [35,60], lewdness: [20,40], grades: [60,85], morale: [70,95], traits: ["cheerful","playful","cute"]},
+    {name: "Skryta i mroczna",        conversation: [10,30], lewdness: [25,50], grades: [75,95], morale: [30,55], traits: ["otaku","genius","quiet"]},
+    {name: "Tsundere",                conversation: [30,55], lewdness: [15,45], grades: [65,90], morale: [50,75], traits: ["tsundere","proud","competitive"]},
+    {name: "Łagodna i opiekuńcza",    conversation: [40,65], lewdness: [10,25], grades: [70,92], morale: [65,90], traits: ["kind","caring","reliable"]},
+    {name: "Energetyczna sportsmenka",conversation: [25,50], lewdness: [20,40], grades: [55,80], morale: [75,95], traits: ["athletic","energetic","tomboy"]},
+    {name: "Inteligentna perfekcjonistka", conversation: [50,75], lewdness: [10,30], grades: [90,100], morale: [40,70], traits: ["smart","perfectionist","bookworm"]}
+];
+
+const BACKSTORIES = {
+    "Nieśmiała i wrażliwa": [
+        "Pochodzi z biednej rodziny, ojciec stracił pracę. Bardzo niepewna siebie.",
+        "Straciła matkę w młodości, mieszka tylko z ojcem alkoholikiem.",
+        "Nowa uczennica, przeniosła się z prowincji, nie ma przyjaciół."
+    ],
+    "Pewna siebie i ambitna": [
+        "Popularna w szkole, ale rodzina ukrywa problemy finansowe.",
+        "Córka byłego biznesmena, który zbankrutował.",
+        "Chce zostać influencerką lub modelką, potrzebuje szybkich pieniędzy."
+    ],
+    // ... dodaj więcej dla pozostałych osobowości (możesz dodać 2-3 na każdą)
+    // Dla prostoty możesz zrobić jedną wspólną pulę i lekko modyfikować
+};
+
+function generateRandomGirl() {
+    const personality = PERSONALITIES[Math.floor(Math.random() * PERSONALITIES.length)];
+    
+    const first = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
+    const last = LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)];
+
+    const age = 16 + Math.floor(Math.random() * 4); // 16-19
+
+    // Statystyki bazowe + modyfikatory osobowości
+    const loyalty = 35 + Math.floor(Math.random() * 35);
+    const lewdness = personality.lewdness[0] + Math.floor(Math.random() * (personality.lewdness[1] - personality.lewdness[0] + 1));
+    const grades = personality.grades[0] + Math.floor(Math.random() * (personality.grades[1] - personality.grades[0] + 1));
+    const morale = personality.morale[0] + Math.floor(Math.random() * (personality.morale[1] - personality.morale[0] + 1));
+
+    const conversation = personality.conversation[0] + Math.floor(Math.random() * (personality.conversation[1] - personality.conversation[0] + 1));
+
+    // Losowe umiejętności seksualne (zależne od lewdness)
+    const handjob = Math.max(0, Math.floor(lewdness * 0.6) + Math.floor(Math.random() * 15) - 10);
+    const blowjob = Math.max(0, Math.floor(lewdness * 0.4) + Math.floor(Math.random() * 12) - 8);
+    const vaginal = Math.max(0, Math.floor(lewdness * 0.3) - 5 + Math.floor(Math.random() * 10));
+    const anal = Math.max(0, Math.floor(lewdness * 0.15) - 10 + Math.floor(Math.random() * 8));
+    const feet = Math.max(0, Math.floor(lewdness * 0.5) + Math.floor(Math.random() * 18) - 12);
+
+    const traits = [...personality.traits];
+    if (lewdness < 15) traits.push("virgin");
+    if (morale < 50) traits.push("insecure");
+    if (grades > 90) traits.push("smart");
+
+    // Backstory – uproszczone (możesz rozbudować)
+    const backstory = `${personality.name.toLowerCase()}. ${["Pochodzi z biednej rodziny.", "Ma problemy finansowe w domu.", "Nowa w Seiran Academy.", "Chce pomóc rodzinie."][Math.floor(Math.random()*4)]}`;
+
+    return {
         id: gameState.nextGirlId++,
-        name: names[Math.floor(Math.random() * names.length)] + ' ' + ['Sato','Ito','Kato'][Math.floor(Math.random() * 3)],
-        age: 18 + Math.floor(Math.random() * 3),
-        personality: ['Nieśmiała','Ambitna','Wesoła'][Math.floor(Math.random() * 3)],
-        backstory: 'Nowa rekrutka z problemami finansowymi.',
-        loyalty: 30 + Math.floor(Math.random() * 30),
-        lewdness: 10 + Math.floor(Math.random() * 20),
-        grades: 70 + Math.floor(Math.random() * 20),
-        morale: 50 + Math.floor(Math.random() * 30),
+        name: `${first} ${last}`,
+        age: age,
+        personality: personality.name,
+        backstory: backstory,
+        loyalty: Math.min(95, loyalty),
+        lewdness: Math.min(60, lewdness),           // na start raczej niskie
+        grades: Math.min(100, grades),
+        morale: Math.min(100, morale),
         skills: {
-            conversation: 20 + Math.floor(Math.random() * 30),
-            handjob: Math.floor(Math.random() * 20),
-            blowjob: Math.floor(Math.random() * 10),
-            vaginal: 0, anal: 0
+            conversation: Math.min(80, conversation),
+            handjob: Math.min(60, handjob),
+            blowjob: Math.min(50, blowjob),
+            vaginal: Math.min(40, vaginal),
+            anal: Math.min(25, anal),
+            feet: Math.min(55, feet)
         },
         currentJob: 'none',
-        traits: ['newbie'],
+        traits: traits,
         available: true
     };
-    gameState.girls.push(girl);
-    logEvent(`✨ ${girl.name} dołączyła!`, 'recruit');
 }
+
 
 function logEvent(msg, type) {
     const ts = `${gameState.time.day}/${gameState.time.month} ${String(gameState.time.hour).padStart(2,'0')}:00`;
