@@ -1,0 +1,78 @@
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gakuen Empire Idle</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="container">
+        <nav class="tabs">
+            <button onclick="showTab('dashboard')">Dashboard</button>
+            <button onclick="showTab('girls')">Girls</button>
+            <button onclick="showTab('school')">School</button>
+            <button onclick="showTab('business')">Business</button>
+            <button onclick="showTab('city')">City</button>
+            <button onclick="showTab('events')">Events</button>
+            <button onclick="showTab('options')">Options</button>
+        </nav>
+        <div id="dashboard" class="tab-content">
+            <h2>Dashboard</h2>
+            <div id="time-display"></div>
+            <div id="stats-overview"></div>
+            <div id="income-summary"></div>
+            <div id="active-counts"></div>
+            <div id="alerts"></div>
+            <div>
+                <button onclick="setSpeed(1)">1x</button>
+                <button onclick="setSpeed(5)">5x</button>
+                <button onclick="setSpeed(10)">10x</button>
+                <button onclick="togglePause()">Pause/Resume</button>
+            </div>
+        </div>
+        <div id="girls" class="tab-content" style="display:none;">
+            <h2>Girls</h2>
+            <div id="girls-list"></div>
+            <button onclick="recruitGirl()">Recruit New Girl (¥50k-¥200k)</button>
+        </div>
+        <div id="school" class="tab-content" style="display:none;">
+            <h2>School</h2>
+            <div id="school-list"></div>
+            <div id="investments"></div>
+        </div>
+        <div id="business" class="tab-content" style="display:none;">
+            <h2>Business</h2>
+            <div id="operations"></div>
+            <button onclick="toggleYakuza()">Toggle Yakuza Protection</button>
+        </div>
+        <div id="city" class="tab-content" style="display:none;">
+            <h2>City</h2>
+            <div id="city-list"></div>
+        </div>
+        <div id="events" class="tab-content" style="display:none;">
+            <h2>Events</h2>
+            <div id="event-log"></div>
+        </div>
+        <div id="options" class="tab-content" style="display:none;">
+            <h2>Options</h2>
+            <button onclick="saveGame()">Save</button>
+            <button onclick="loadGame()">Load</button>
+            <button onclick="resetGame()">Reset</button>
+        </div>
+        <div id="modal" class="modal" style="display:none;">
+            <div class="modal-content">
+                <span onclick="closeModal()" class="close">&times;</span>
+                <div id="modal-body"></div>
+            </div>
+        </div>
+    </div>
+    <script src="js/data.js"></script>
+    <script src="js/time.js"></script>
+    <script src="js/girls.js"></script>
+    <script src="js/events.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
