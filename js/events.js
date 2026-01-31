@@ -91,29 +91,63 @@ function selectChoice(event, choice) {
     if (cost > 0) gameState.money -= cost;
 
     const e = choice.effects || {};
-    if (e.money) gameState.money += e.money;
-    if (e.reputation) gameState.reputation = Math.max(0, Math.min(100, gameState.reputation + e.reputation));
-    if (e.risk) gameState.risk = Math.max(0, Math.min(100, gameState.risk + e.risk));
-    if (e.morale) gameState.girls.forEach(g => g.morale = Math.max(0, Math.min(100, g.morale + e.morale)));
-    if (e.loyalty) gameState.girls.forEach(g => g.loyalty = Math.max(0, Math.min(100, g.loyalty + e.loyalty)));
-    if (e.yakuzaProtection !== undefined) gameState.yakuzaProtection = e.yakuzaProtection;
-    if (e.profitTax) gameState.profitTax = e.profitTax;
+
+    // ────────────────────────────────────────────────
+    // Jeśli event dotyczył konkretnej dziewczyny
+    // ────────────────────────────────────────────────
+    if (event.targetGirlId) {
+        const girl = gameState.girls.find(g => g.id === event.targetGirlId);
+        if (!girl) {
+            console.warn("Nie znaleziono dziewczyny o id:", event.targetGirlId);
+            return;
+        }
+
+        if (e.loyalty) {
+            girl.loyalty = Math.min(100, Math.max(0, girl.loyalty + e.loyalty));
+        }
+        if (e.morale) {
+            girl.morale = Math.min(100, Math.max(0, girl.morale + e.morale));
+        }
+        if (e.money) {
+            gameState.money += e.money;
+        }
+
+        // Log z imieniem dziewczyny
+        logEvent(`📅 ${girl.name} – ${choice.followUpText}`, 'date');
+
+        // Opcjonalny mały bonus za udaną randkę
+        gameState.money += 2000 + Math.floor(Math.random() * 5000); // 2–7k dodatkowo
+    }
+    else {
+        // Stare zachowanie – efekty globalne
+        if (e.money) gameState.money += e.money;
+        if (e.reputation) gameState.reputation = Math.max(0, Math.min(100, gameState.reputation + e.reputation));
+        if (e.risk) gameState.risk = Math.max(0, Math.min(100, gameState.risk + e.risk));
+        if (e.morale) gameState.girls.forEach(g => g.morale = Math.max(0, Math.min(100, g.morale + e.morale)));
+        if (e.loyalty) gameState.girls.forEach(g => g.loyalty = Math.max(0, Math.min(100, g.loyalty + e.loyalty)));
+        if (e.yakuzaProtection !== undefined) gameState.yakuzaProtection = e.yakuzaProtection;
+        if (e.profitTax) gameState.profitTax = e.profitTax;
+
+        logEvent(`📰 ${event.title} – ${choice.text}`, 'event');
+    }
+
+    // Wspólne dla wszystkich eventów
     if (e.unlockJob && !gameState.unlockedJobs.includes(e.unlockJob)) {
         gameState.unlockedJobs.push(e.unlockJob);
         logEvent(`🔓 ${JOBS_DATA[e.unlockJob].name}`, 'unlock');
     }
     if (e.addGirl) addRandomGirl();
 
-    logEvent(`📰 ${event.title}`, 'event');
-    gameState.completedEvents.push(event.id);
     if (event.cooldown) gameState.eventCooldowns[event.id] = event.cooldown;
+    gameState.completedEvents.push(event.id);  // ewentualnie tylko dla oneTime
 
-    if (choice.followUpText) alert(choice.followUpText);
+    if (choice.followUpText && !event.targetGirlId) {
+        alert(choice.followUpText);
+    }
 
     document.getElementById('event-modal').classList.remove('active');
-    // AUTO-RESUME
     gameState.isPaused = false;
-    document.getElementById('pause-btn').textContent = '⏸ Pauza';
+    document.getElementById('pause-btn').textContent = '▶ Start';  // ← poprawione, bo wcześniej było na stałe 'Pauza'
     updateAll();
 }
 
