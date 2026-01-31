@@ -334,10 +334,21 @@ function updateAverageMorale() {
 // UI UPDATES
 // ============================================================================
 
+let lastGirlsRender = 0;
+const GIRLS_RENDER_COOLDOWN_MS = 1800;   // 1.8 sekundy
+
 function updateAll() {
     updateTime();
     updateDashboard();
-    if (document.getElementById('page-girls').classList.contains('active')) renderGirls();
+
+    const now = Date.now();
+
+    if (document.getElementById('page-girls').classList.contains('active')) {
+        if (now - lastGirlsRender >= GIRLS_RENDER_COOLDOWN_MS) {
+            renderGirls();
+            lastGirlsRender = now;
+        }
+    }
 }
 
 function updateTime() {
