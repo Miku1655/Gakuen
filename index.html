@@ -175,7 +175,7 @@ let gameLoopInterval;
 // ============================================================================
 
 function initGame() {
-    gameState.girls = GIRLS_DATA.map(g => ({...g}));
+    gameState.girls = [generateRandomGirl()];
     updateAll();
     setupUI();
     startGameLoop();
