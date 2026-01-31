@@ -272,3 +272,4 @@ function renderEventLog() {
     });
     container.innerHTML = html + '</div>';
 }
+} 
