@@ -427,8 +427,8 @@ function renderGirls() {
                 <button onclick="trainGirl(${g.id})" class="action-btn" style="flex:1;" ${gameState.money < 15000 ? 'disabled' : ''}>
                     📚 Trening (¥15k)
                 </button>
-                <button onclick="comfortGirl(${g.id})" class="action-btn" style="flex:1;" ${g.morale >= 50 ? 'disabled' : ''}>
-                    ❤️ Pociesz ${g.morale >= 50 ? '(≥50%)' : ''}
+                <button onclick="comfortGirl(${g.id})" class="action-btn" style="flex:1;" ${g.morale >= 90 ? 'disabled' : ''}>
+                    ❤️ Pociesz ${g.morale >= 90 ? '(≥90%)' : ''}
                 </button>
             </div>
         </div>`;
@@ -487,8 +487,9 @@ function trainGirl(girlId) {
 }
 
 function comfortGirl(girlId) {
+    cooldown: 24;
     const girl = gameState.girls.find(g => g.id === girlId);
-    if (girl.morale >= 50) return;
+    if (girl.morale >= 90) return;
     girl.morale = Math.min(100, girl.morale + 15);
     girl.loyalty = Math.min(100, girl.loyalty + 5);
     logEvent(`Pocieszyłeś ${girl.name}`, 'comfort');
