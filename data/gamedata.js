@@ -112,7 +112,7 @@ const EVENTS_DATA = [
             followUpText: "Odchodzisz. Dziewczyna zostaje sama w korytarzu."
         }
     ]
-}
+}, 
     {
         id: "low_morale", title: "Kryzys Morale",
         description: "Dziewczyny są wyczerpane. Grożą odejściem. Premia ¥50k?",
