@@ -2,32 +2,6 @@
 // GAME DATA
 // ============================================================================
 
-const GIRLS_DATA = [
-    {
-        id: 1, name: "Sakura Tanaka", age: 17,
-        personality: "Nieśmiała i wrażliwa",
-        backstory: "Uczennica Seiran Academy z trudnej rodziny. Ojciec stracił pracę.",
-        loyalty: 50, lewdness: 10, grades: 85, morale: 60,
-        skills: { conversation: 30, handjob: 5, blowjob: 0, vaginal: 0, anal: 0, feet: 0 },
-        currentJob: "none", traits: ["virgin", "shy", "smart"], available: true
-    },
-    {
-        id: 2, name: "Yuki Nakamura", age: 18,
-        personality: "Pewna siebie i ambitna",
-        backstory: "Popularna w Seiran, ukrywa biedę rodziny.",
-        loyalty: 40, lewdness: 5, grades: 95, morale: 75,
-        skills: { conversation: 60, handjob: 20, blowjob: 10, vaginal: 0, anal: 0, feet: 0 },
-        currentJob: "none", traits: ["athletic", "confident"], available: true
-    },
-    {
-        id: 3, name: "Mei Kobayashi", age: 16,
-        personality: "Skryta i mroczna",
-        backstory: "Nowa w Seiran po przeniesieniu. Rodzina straciła dom.",
-        loyalty: 60, lewdness: 30, grades: 75, morale: 40,
-        skills: { conversation: 15, handjob: 15, blowjob: 10, vaginal: 15, anal: 0, feet: 5 },
-        currentJob: "none", traits: ["virgin", "otaku", "genius"], available: true
-    }
-];
 
 const JOBS_DATA = {
     none: { name: "Bez pracy", baseIncome: 0, risk: 0, requiredLewdness: 0 },
@@ -60,14 +34,27 @@ const JOBS_DATA = {
 
 const EVENTS_DATA = [
     {
-        id: "date_return_1", title: "Powrót z Randki",
-        description: "Dziewczyna wraca z randki zmęczona. Trzyma kopertę z pieniędzmi.\n\n\"Udało się... Chłopak był miły, ale nachalne.\"\n\nJej oczy błyszczą wilgocią.",
-        conditions: { minGirls: 1 }, chance: 4, cooldown: 72,
-        choices: [
-            { text: "Przytul ją i pochwal", effects: { loyalty: 10, morale: 15, money: 5000 }, followUpText: "Przytula się i płacze. \"Dziękuję...\"" },
-            { text: "Weź pieniądze bez słowa", effects: { loyalty: -5, morale: -10, money: 10000 }, followUpText: "Wygląda na zranioną." }
-        ]
-    },
+    id: "date_return_1",
+    title: "Powrót z randki",
+    description: "",   // ← zostawiamy puste – wypełniamy dynamicznie
+    templateDescription: "{girlName} wraca z randki zmęczona. Trzyma kopertę z pieniędzmi.\n\n\"Udało się... Chłopak był miły, ale nachalny.\"\n\nJej oczy błyszczą wilgocią.",
+    conditions: { minGirls: 1 },
+    chance: 4,
+    cooldown: 72,
+    targetJob: "school_dates",   // ← ważne – tylko dziewczyny z tą pracą
+    choices: [
+        {
+            text: "Przytul ją i pochwal",
+            effects: { loyalty: 10, morale: 15, money: 5000 },
+            followUpText: "Przytula się i płacze. \"Dziękuję...\""
+        },
+        {
+            text: "Weź pieniądze bez słowa",
+            effects: { loyalty: -5, morale: -10, money: 10000 },
+            followUpText: "Wygląda na zranioną."
+        }
+    ]
+},
     {
         id: "yakuza_offer", title: "Propozycja Yakuzy",
         description: "Mężczyzna w czarnym garniturze wchodzi do biura. Tatuaże na rękach.\n\n\"Prowadzisz interesujący biznes. Jestem Takeshi z klanu Yamaguchi. Ochrona za 15% zysków?\"",
