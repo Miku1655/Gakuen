@@ -71,7 +71,7 @@ const EVENTS_DATA = [
     {
         id: "yakuza_offer", title: "Propozycja Yakuzy",
         description: "Mężczyzna w czarnym garniturze wchodzi do biura. Tatuaże na rękach.\n\n\"Prowadzisz interesujący biznes. Jestem Takeshi z klanu Yamaguchi. Ochrona za 15% zysków?\"",
-        conditions: { minMoney: 100000, minGirls: 2 }, chance: 15, oneTime: true,
+        conditions: { minMoney: 100000, minGirls: 4 }, chance: 15, oneTime: true,
         choices: [
             { text: "Przyjmij (15% podatek, -20 risk, +10 rep)", cost: 0, effects: { yakuzaProtection: true, profitTax: 15, reputation: 10, risk: -20 }, followUpText: "\"Mądra decyzja. Jesteś pod opieką.\"" },
             { text: "Odmów grzecznie", cost: 0, effects: { risk: 10 }, followUpText: "\"Rozumiem. Jeśli zmienisz zdanie...\"" }
