@@ -162,6 +162,7 @@ function selectChoice(event, choice) {
     gameState.isPaused = false;
     document.getElementById('pause-btn').textContent = '▶ Start';
     updateAll();
+} 
 
 const FIRST_NAMES = ['Hana','Aiko','Yui','Rin','Nao','Saki','Mei','Sakura','Yuki','Akari','Haruka','Miyu','Noa','Hina','Sara','Aya','Emi','Riko','Yuna','Kana'];
 const LAST_NAMES = ['Tanaka','Nakamura','Kobayashi','Sato','Ito','Kato','Suzuki','Yamamoto','Watanabe','Takahashi','Yamada','Sasaki','Yamaguchi','Matsumoto','Inoue'];
