@@ -62,7 +62,7 @@ const EVENTS_DATA = [
     {
         id: "date_return_1", title: "Powrót z Randki",
         description: "Dziewczyna wraca z randki zmęczona. Trzyma kopertę z pieniędzmi.\n\n\"Udało się... Chłopak był miły, ale nachalne.\"\n\nJej oczy błyszczą wilgocią.",
-        conditions: { minGirls: 1 }, chance: 4, cooldown: 20,
+        conditions: { minGirls: 1 }, chance: 4, cooldown: 72,
         choices: [
             { text: "Przytul ją i pochwal", effects: { loyalty: 10, morale: 15, money: 5000 }, followUpText: "Przytula się i płacze. \"Dziękuję...\"" },
             { text: "Weź pieniądze bez słowa", effects: { loyalty: -5, morale: -10, money: 10000 }, followUpText: "Wygląda na zranioną." }
