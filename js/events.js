@@ -30,6 +30,6 @@ function enterHardMode() {
     // Unlock new jobs, cities, events
     jobs.push({ name: 'Idol Agency', reqLewd: 100, baseIncome: 50000, risk: 70 });
     cities.push('Seoul');
-    eventsData.push({ id: 'rivalAttack', chance: 0.05, text: 'Rival attacks!', choices: [...] });
+    eventsData.push({ id: 'rivalAttack', chance: 0.05, text: 'Rival attacks!', choices:});
     showModal('Entered Hard Mode!');
 }
