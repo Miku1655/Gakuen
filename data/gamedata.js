@@ -61,11 +61,11 @@ const JOBS_DATA = {
 const EVENTS_DATA = [
     {
         id: "date_return_1", title: "Powrót z Randki",
-        description: "Sakura wraca z randki zmęczona. Trzyma kopertę z pieniędzmi.\n\n\"Udało się... Chłopak był miły, ale nachalne.\"\n\nJej oczy błyszczą wilgocią.",
-        conditions: { minGirls: 1 }, chance: 25, cooldown: 5,
+        description: "Dziewczyna wraca z randki zmęczona. Trzyma kopertę z pieniędzmi.\n\n\"Udało się... Chłopak był miły, ale nachalne.\"\n\nJej oczy błyszczą wilgocią.",
+        conditions: { minGirls: 1 }, chance: 4, cooldown: 20,
         choices: [
-            { text: "Przytul ją i pochwal", effects: { loyalty: 10, morale: 15, money: 5000 }, followUpText: "Sakura przytula się i płacze. \"Dziękuję...\"" },
-            { text: "Weź pieniądze bez słowa", effects: { loyalty: -5, morale: -10, money: 5000 }, followUpText: "Wygląda zraniona." }
+            { text: "Przytul ją i pochwal", effects: { loyalty: 10, morale: 15, money: 5000 }, followUpText: "Przytula się i płacze. \"Dziękuję...\"" },
+            { text: "Weź pieniądze bez słowa", effects: { loyalty: -5, morale: -10, money: 10000 }, followUpText: "Wygląda na zranioną." }
         ]
     },
     {
@@ -107,7 +107,7 @@ const EVENTS_DATA = [
     {
         id: "recruit_student", title: "Nowa Uczennica",
         description: "Transferka w klasie 1-A. Wygląda zagubiona. Porozmawiać? Koszt rekrutacji: ¥50k.",
-        conditions: { minReputation: 30, minMoney: 50000 }, chance: 8, cooldown: 10,
+        conditions: { minReputation: 30, minMoney: 50000 }, chance: 2, cooldown: 100,
         choices: [
             { text: "Zaproponuj pracę (-¥50k)", cost: 50000, effects: { addGirl: true, reputation: 5 }, followUpText: "✅ Nowa dziewczyna!" },
             { text: "Zignoruj", cost: 0, effects: {}, followUpText: "Szansa przepadła." }
@@ -116,7 +116,7 @@ const EVENTS_DATA = [
     {
         id: "low_morale", title: "Kryzys Morale",
         description: "Dziewczyny są wyczerpane. Grożą odejściem. Premia ¥50k?",
-        conditions: { minMorale: 0, maxMorale: 35, minMoney: 50000 }, chance: 50, cooldown: 7,
+        conditions: { minMorale: 0, maxMorale: 35, minMoney: 50000 }, chance: 50, cooldown: 24,
         choices: [
             { text: "Daj premię (-¥50k)", cost: 50000, effects: { morale: 20, loyalty: 10 }, followUpText: "Atmosfera się poprawia." },
             { text: "Ignoruj", cost: 0, effects: { morale: -10, loyalty: -15, risk: 20 }, followUpText: "Sytuacja pogarsza się..." }
