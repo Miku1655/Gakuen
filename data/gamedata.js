@@ -91,15 +91,28 @@ const EVENTS_DATA = [
             { text: "Odmów", cost: 0, effects: {}, followUpText: "Za drogo..." }
         ]
     },
-    {
-        id: "recruit_student", title: "Nowa Uczennica",
-        description: "Transferka w klasie 1-A. Wygląda zagubiona. Porozmawiać? Koszt rekrutacji: ¥50k.",
-        conditions: { minReputation: 30, minMoney: 50000 }, chance: 2, cooldown: 100,
-        choices: [
-            { text: "Zaproponuj pracę (-¥50k)", cost: 50000, effects: { addGirl: true, reputation: 5 }, followUpText: "✅ Nowa dziewczyna!" },
-            { text: "Zignoruj", cost: 0, effects: {}, followUpText: "Szansa przepadła." }
-        ]
-    },
+ {
+    id: "recruit_student",
+    title: "Nowa Uczennica",
+    description: "Transferka w klasie 1-A wygląda na zagubioną i zestresowaną. Wygląda na to, że ma problemy finansowe. Porozmawiać z nią?",
+    conditions: { minReputation: 30, minMoney: 50000 },
+    chance: 2,
+    cooldown: 100,
+    choices: [
+        {
+            text: "Zaproponuj pomoc i pracę (-¥50k)",
+            cost: 50000,
+            effects: { addGirl: true, reputation: 5 },
+            followUpText: "Dziewczyna kiwa głową z wdzięcznością. „Dziękuję… naprawdę potrzebowałam tej szansy.”"
+        },
+        {
+            text: "Zignoruj ją",
+            cost: 0,
+            effects: {},
+            followUpText: "Odchodzisz. Dziewczyna zostaje sama w korytarzu."
+        }
+    ]
+}
     {
         id: "low_morale", title: "Kryzys Morale",
         description: "Dziewczyny są wyczerpane. Grożą odejściem. Premia ¥50k?",
