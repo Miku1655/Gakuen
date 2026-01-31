@@ -136,7 +136,7 @@ function selectChoice(event, choice) {
         gameState.unlockedJobs.push(e.unlockJob);
         logEvent(`🔓 ${JOBS_DATA[e.unlockJob].name}`, 'unlock');
     }
-    if (e.addGirl) addRandomGirl();
+    if (e.addGirl) generateRandomGirl();
 
     if (event.cooldown) gameState.eventCooldowns[event.id] = event.cooldown;
     gameState.completedEvents.push(event.id);  // ewentualnie tylko dla oneTime
