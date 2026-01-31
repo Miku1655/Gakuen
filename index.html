@@ -1,4 +1,3 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,66 +7,118 @@
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-    <div class="container">
-        <nav class="tabs">
-            <button onclick="showTab('dashboard')">Dashboard</button>
-            <button onclick="showTab('girls')">Girls</button>
-            <button onclick="showTab('school')">School</button>
-            <button onclick="showTab('business')">Business</button>
-            <button onclick="showTab('city')">City</button>
-            <button onclick="showTab('events')">Events</button>
-            <button onclick="showTab('options')">Options</button>
-        </nav>
-        <div id="dashboard" class="tab-content">
-            <h2>Dashboard</h2>
-            <div id="time-display"></div>
-            <div id="stats-overview"></div>
-            <div id="income-summary"></div>
-            <div id="active-counts"></div>
-            <div id="alerts"></div>
-            <div>
-                <button onclick="setSpeed(1)">1x</button>
-                <button onclick="setSpeed(5)">5x</button>
-                <button onclick="setSpeed(10)">10x</button>
-                <button onclick="togglePause()">Pause/Resume</button>
+    <div class="app-container">
+        <!-- Left Sidebar / Main Menu -->
+        <aside class="sidebar">
+            <h1 class="logo">Gakuen Empire</h1>
+            <nav class="menu">
+                <button class="menu-item active" onclick="showSection('dashboard')">Dashboard</button>
+                <button class="menu-item" onclick="showSection('girls')">Girls</button>
+                <button class="menu-item" onclick="showSection('school')">School</button>
+                <button class="menu-item" onclick="showSection('business')">Business</button>
+                <button class="menu-item" onclick="showSection('city')">City / Expansion</button>
+                <button class="menu-item" onclick="showSection('events')">Events & Log</button>
+                <button class="menu-item" onclick="showSection('options')">Options</button>
+            </nav>
+
+            <!-- Quick status always visible in sidebar -->
+            <div class="sidebar-status">
+                <div id="sidebar-time"></div>
+                <div id="sidebar-money">¥<span id="money-value">0</span></div>
+                <div id="sidebar-debt">Debt: ¥<span id="debt-value">0</span></div>
+                <div id="sidebar-speed">Speed: <span id="speed-value">1</span>×</div>
+                <div class="speed-controls">
+                    <button onclick="setSpeed(1)">1×</button>
+                    <button onclick="setSpeed(5)">5×</button>
+                    <button onclick="setSpeed(10)">10×</button>
+                    <button id="pause-btn" onclick="togglePause()">Pause</button>
+                </div>
             </div>
-        </div>
-        <div id="girls" class="tab-content" style="display:none;">
-            <h2>Girls</h2>
-            <div id="girls-list"></div>
-            <button onclick="recruitGirl()">Recruit New Girl (¥50k-¥200k)</button>
-        </div>
-        <div id="school" class="tab-content" style="display:none;">
-            <h2>School</h2>
-            <div id="school-list"></div>
-            <div id="investments"></div>
-        </div>
-        <div id="business" class="tab-content" style="display:none;">
-            <h2>Business</h2>
-            <div id="operations"></div>
-            <button onclick="toggleYakuza()">Toggle Yakuza Protection</button>
-        </div>
-        <div id="city" class="tab-content" style="display:none;">
-            <h2>City</h2>
-            <div id="city-list"></div>
-        </div>
-        <div id="events" class="tab-content" style="display:none;">
-            <h2>Events</h2>
-            <div id="event-log"></div>
-        </div>
-        <div id="options" class="tab-content" style="display:none;">
-            <h2>Options</h2>
-            <button onclick="saveGame()">Save</button>
-            <button onclick="loadGame()">Load</button>
-            <button onclick="resetGame()">Reset</button>
-        </div>
-        <div id="modal" class="modal" style="display:none;">
-            <div class="modal-content">
-                <span onclick="closeModal()" class="close">&times;</span>
-                <div id="modal-body"></div>
-            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard - default view -->
+            <section id="dashboard" class="section active">
+                <h2>Dashboard</h2>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Money</h3>
+                        <p id="main-money">¥0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Debt</h3>
+                        <p id="main-debt">¥5,000,000</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Reputation</h3>
+                        <p id="reputation">50</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Avg Morale</h3>
+                        <p id="avg-morale">80%</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Avg Grades</h3>
+                        <p id="avg-grades">70</p>
+                    </div>
+                </div>
+
+                <h3>Daily Income Breakdown</h3>
+                <div id="income-breakdown"></div>
+
+                <h3>Alerts</h3>
+                <div id="alerts" class="alerts"></div>
+
+                <h3>Quick Overview</h3>
+                <p>Girls employed: <span id="girls-count">3</span> • Schools: <span id="schools-count">1</span></p>
+            </section>
+
+            <!-- Other sections (hidden by default) -->
+            <section id="girls" class="section" style="display:none;">
+                <h2>Girls Management</h2>
+                <div id="girls-list" class="girls-grid"></div>
+                <button onclick="recruitGirl()">Recruit Girl (¥50k–¥200k)</button>
+            </section>
+
+            <section id="school" class="section" style="display:none;">
+                <h2>School Management</h2>
+                <div id="school-list"></div>
+            </section>
+
+            <section id="business" class="section" style="display:none;">
+                <h2>Business & Operations</h2>
+                <div id="business-list"></div>
+                <button onclick="toggleYakuza()">Toggle Yakuza Protection</button>
+            </section>
+
+            <section id="city" class="section" style="display:none;">
+                <h2>Cities & Expansion</h2>
+                <div id="city-list"></div>
+            </section>
+
+            <section id="events" class="section" style="display:none;">
+                <h2>Events & History</h2>
+                <div id="event-log"></div>
+            </section>
+
+            <section id="options" class="section" style="display:none;">
+                <h2>Options</h2>
+                <button onclick="saveGame()">Save Game</button>
+                <button onclick="loadGame()">Load Game</button>
+                <button onclick="resetGame()">Reset Game</button>
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal (unchanged) -->
+    <div id="modal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="modal-body"></div>
         </div>
     </div>
+
     <script src="js/data.js"></script>
     <script src="js/time.js"></script>
     <script src="js/girls.js"></script>
