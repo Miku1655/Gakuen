@@ -114,11 +114,13 @@ function checkEventConditions(event) {
         minWorkingGirls: () => {
             const working = gameState.girls.filter(g => g.currentJob !== 'none').length;
             return working >= c.minWorkingGirls;
-        },
+        }
+    };
 
-        return Object.keys(c).every(key => {
-    return conditionCheckers[key] ? conditionCheckers[key]() : true;
-});
+    return Object.keys(c).every(key =>
+        conditionCheckers[key] ? conditionCheckers[key]() : true
+    );
+}
 
 function selectRandomEvent(availableEvents) {
     // You can add weighted random selection here if needed
