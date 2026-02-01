@@ -584,7 +584,7 @@ const EVENTS_DATA = [
                 text: "Zatrudnij tylko starszą (-¥50k)",
                 cost: 50000,
                 effects: {
-                    addGirl: true
+                    addGirl: true,
                     reputation: -5
                 },
                 followUpText: "Starsza siostra przyjmuje ofertę. Młodsza płacze."
