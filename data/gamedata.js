@@ -529,7 +529,7 @@ const EVENTS_DATA = [
     {
         id: "recruit_student",
         title: "Nowa Uczennica",
-        description: "Transferka w klasie 1-A wygląda na zagubioną i zestresowaną. Słyszysz, że ma problemy finansowe.\n\nPorozmawiać z nią?",
+        description: "Jedna z uczennic wygląda na zagubioną i zestresowaną. Słyszysz, że ma problemy finansowe.\n\nPorozmawiać z nią?",
         conditions: { 
             minReputation: 30, 
             minMoney: 50000 
@@ -585,6 +585,7 @@ const EVENTS_DATA = [
                 cost: 50000,
                 effects: {
                     addGirl: true
+                    reputation: -5
                 },
                 followUpText: "Starsza siostra przyjmuje ofertę. Młodsza płacze."
             },
