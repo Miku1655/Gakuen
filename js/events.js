@@ -10,7 +10,7 @@ function triggerRandomEvent() {
     const available = getAvailableEvents();
     if (!available.length) return;
 
-    const event = selectRandomEvent(available);
+    const event = selectRandomEvent(availableEvents);
     const eventInstance = prepareEventInstance(event);
     
     if (!eventInstance) return; // Failed to prepare (e.g., no eligible girls)
