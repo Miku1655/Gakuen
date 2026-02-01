@@ -544,7 +544,7 @@ const EVENTS_DATA = [
                     addGirl: true, 
                     reputation: 5 
                 },
-                followUpText: "Dziewczyna kiwa głową z wdzięcznością. „Dziękuję… naprawdę potrzebowałam tej szansy."",
+                followUpText: "Dziewczyna kiwa głową z wdzięcznością. „Dziękuję… naprawdę potrzebowałam tej szansy.",
                 showAlert: true
             },
             {
