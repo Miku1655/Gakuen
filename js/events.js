@@ -10,7 +10,7 @@ function triggerRandomEvent() {
     const available = getAvailableEvents();
     if (!available.length) return;
 
-    const event = selectRandomEvent(availableEvents);
+    const event = selectRandomEvent(available);
     const eventInstance = prepareEventInstance(event);
     
     if (!eventInstance) return; // Failed to prepare (e.g., no eligible girls)
@@ -112,7 +112,13 @@ function checkEventConditions(event) {
         
         // Working girls (any job except 'none')
         minWorkingGirls: () => {
-            const working = gameState.
+            const working = gameState.girls.filter(g => g.currentJob !== 'none').length;
+            return working >= c.minWorkingGirls;
+        },
+
+        return Object.keys(c).every(key => {
+    return conditionCheckers[key] ? conditionCheckers[key]() : true;
+});
 
 function selectRandomEvent(availableEvents) {
     // You can add weighted random selection here if needed
