@@ -188,7 +188,7 @@ const EVENTS_DATA = [
                     morale: 20, 
                     money: 5000 
                 },
-                followUpText: "Przytula się do ciebie. \"Dziękuję... to dla mnie wiele znaczy.\""
+                followUpText: "Przytula się do ciebie. \"Dziękuję... to dla mnie wiele znaczy.\"",
                 showAlert: true
             },
             {
@@ -198,7 +198,7 @@ const EVENTS_DATA = [
                     morale: -5, 
                     money: 8000 
                 },
-                followUpText: "Smutno kiwa głową i wraca do pracy."
+                followUpText: "Smutno kiwa głową i wraca do pracy.",
                 showAlert: true
             }
         ]
@@ -219,7 +219,7 @@ const EVENTS_DATA = [
                     morale: 15, 
                     money: 5000 
                 },
-                followUpText: "Przytula się i płacze. \"Dziękuję...\""
+                followUpText: "Przytula się i płacze. \"Dziękuję...\"",
                 showAlert: true
             },
             {
@@ -229,7 +229,7 @@ const EVENTS_DATA = [
                     morale: -10, 
                     money: 10000 
                 },
-                followUpText: "Wygląda na zranioną."
+                followUpText: "Wygląda na zranioną.",
                 showAlert: true
             },
             {
@@ -240,7 +240,7 @@ const EVENTS_DATA = [
                     morale: 25,
                     money: 3000
                 },
-                followUpText: "Uśmiecha się przez łzy. \"Jesteś... dobry. Dziękuję.\""
+                followUpText: "Uśmiecha się przez łzy. \"Jesteś... dobry. Dziękuję.\"",
                 showAlert: true
             }
         ]
@@ -263,7 +263,7 @@ const EVENTS_DATA = [
                     lewdness: 10,
                     loyalty: -5
                 },
-                followUpText: "{girlName} kiwa głową i idzie z mężczyzną..."
+                followUpText: "{girlName} kiwa głową i idzie z mężczyzną...",
                 showAlert: true
             },
             {
@@ -273,7 +273,7 @@ const EVENTS_DATA = [
                     morale: 10,
                     money: -5000
                 },
-                followUpText: "Dziewczyna wygląda na wdzięczną. \"Dziękuję, że mnie ochroniłeś.\""
+                followUpText: "Dziewczyna wygląda na wdzięczną. \"Dziękuję, że mnie ochroniłeś.\"",
                 showAlert: true
             }
         ]
@@ -297,7 +297,7 @@ const EVENTS_DATA = [
                     loyalty: 15,
                     morale: 20
                 },
-                followUpText: "Uśmiecha się słabo. \"Dziękuję... To miłe z twojej strony.\""
+                followUpText: "Uśmiecha się słabo. \"Dziękuję... To miłe z twojej strony.\"",
                 showAlert: true
             },
             {
@@ -307,7 +307,7 @@ const EVENTS_DATA = [
                     morale: -25,
                     money: 5000
                 },
-                followUpText: "Wyraźnie cierpi, ale idzie do pracy..."
+                followUpText: "Wyraźnie cierpi, ale idzie do pracy...",
                 showAlert: true
             },
             {
@@ -316,7 +316,7 @@ const EVENTS_DATA = [
                     loyalty: 5,
                     morale: 5
                 },
-                followUpText: "Kiwa głową i wraca do łóżka."
+                followUpText: "Kiwa głową i wraca do łóżka.",
                 showAlert: true
             }
         ]
@@ -341,7 +341,7 @@ const EVENTS_DATA = [
                         type: "event"
                     }
                 },
-                followUpText: "Wszystkie dziewczyny bawią się świetnie! {girlName} płacze ze szczęścia."
+                followUpText: "Wszystkie dziewczyny bawią się świetnie! {girlName} płacze ze szczęścia.",
                 showAlert: true
             },
             {
@@ -351,7 +351,7 @@ const EVENTS_DATA = [
                     loyalty: 15,
                     morale: 20
                 },
-                followUpText: "Uśmiecha się szeroko. \"To najlepszy prezent!\""
+                followUpText: "Uśmiecha się szeroko. \"To najlepszy prezent!\"",
                 showAlert: true
             },
             {
@@ -360,7 +360,7 @@ const EVENTS_DATA = [
                     loyalty: -5,
                     morale: -10
                 },
-                followUpText: "Uśmiech znika z jej twarzy..."
+                followUpText: "Uśmiech znika z jej twarzy...",
                 showAlert: true
             }
         ]
@@ -390,7 +390,7 @@ const EVENTS_DATA = [
             {
                 text: "Odmów",
                 effects: {},
-                followUpText: "Szansa przepadła."
+                followUpText: "Szansa przepadła.",
                 showAlert: true
             }
         ]
@@ -415,7 +415,7 @@ const EVENTS_DATA = [
             {
                 text: "Odmów",
                 effects: {},
-                followUpText: "Może później..."
+                followUpText: "Może później...",
                 showAlert: true
             }
         ]
@@ -441,7 +441,7 @@ const EVENTS_DATA = [
             {
                 text: "Odmów",
                 effects: {},
-                followUpText: "Za drogo..."
+                followUpText: "Za drogo...",
                 showAlert: true
             }
         ]
@@ -471,7 +471,7 @@ const EVENTS_DATA = [
             {
                 text: "Odmów",
                 effects: {},
-                followUpText: "Jeszcze nie jestem gotowy..."
+                followUpText: "Jeszcze nie jestem gotowy...",
                 showAlert: true
             }
         ]
@@ -505,7 +505,7 @@ const EVENTS_DATA = [
             {
                 text: "Odmów grzecznie",
                 effects: { risk: 10 },
-                followUpText: "\"Rozumiem. Jeśli zmienisz zdanie...\" Wychodzi spokojnie."
+                followUpText: "\"Rozumiem. Jeśli zmienisz zdanie...\" Wychodzi spokojnie.",
                 showAlert: true
             }
         ]
@@ -527,7 +527,7 @@ const EVENTS_DATA = [
                 effects: { 
                     risk: -5 
                 },
-                followUpText: "\"Przyjemność robić z tobą interesy.\" Odchodzą."
+                followUpText: "\"Przyjemność robić z tobą interesy.\" Odchodzą.",
                 showAlert: true
             },
             {
@@ -537,7 +537,7 @@ const EVENTS_DATA = [
                     loyalty: -10,
                     risk: 15
                 },
-                followUpText: "\"Nie lubię tego...\" Bierze pieniądze siłą i niszczy wyposażenie."
+                followUpText: "\"Nie lubię tego...\" Bierze pieniądze siłą i niszczy wyposażenie.",
                 showAlert: true
             }
         ]
@@ -570,7 +570,7 @@ const EVENTS_DATA = [
             {
                 text: "Zignoruj ją",
                 effects: {},
-                followUpText: "Odchodzisz. Dziewczyna zostaje sama w korytarzu."
+                followUpText: "Odchodzisz. Dziewczyna zostaje sama w korytarzu.",
                 showAlert: true
             }
         ]
@@ -608,7 +608,7 @@ const EVENTS_DATA = [
                     addGirl: true,
                     reputation: -5
                 },
-                followUpText: "Starsza siostra przyjmuje ofertę. Młodsza płacze."
+                followUpText: "Starsza siostra przyjmuje ofertę. Młodsza płacze.",
                 showAlert: true
             },
             {
@@ -616,7 +616,7 @@ const EVENTS_DATA = [
                 effects: {
                     reputation: -5
                 },
-                followUpText: "Odchodzą zrozpaczone..."
+                followUpText: "Odchodzą zrozpaczone...",
                 showAlert: true
             }
         ]
@@ -644,7 +644,7 @@ const EVENTS_DATA = [
                     morale: 20, 
                     loyalty: 10 
                 },
-                followUpText: "Atmosfera się poprawia. Dziewczyny dziękują."
+                followUpText: "Atmosfera się poprawia. Dziewczyny dziękują.",
                 showAlert: true
             },
             {
@@ -655,7 +655,7 @@ const EVENTS_DATA = [
                     loyalty: 20,
                     reputation: 5
                 },
-                followUpText: "Weekend w spa! Wszystkie wracają zrelaksowane i wdzięczne."
+                followUpText: "Weekend w spa! Wszystkie wracają zrelaksowane i wdzięczne.",
                 showAlert: true
             },
             {
@@ -665,7 +665,7 @@ const EVENTS_DATA = [
                     loyalty: -15, 
                     risk: 20 
                 },
-                followUpText: "Sytuacja pogarsza się... Dwie dziewczyny mówią o odejściu."
+                followUpText: "Sytuacja pogarsza się... Dwie dziewczyny mówią o odejściu.",
                 showAlert: true
             }
         ]
@@ -687,7 +687,7 @@ const EVENTS_DATA = [
                 effects: {
                     risk: -30
                 },
-                followUpText: "Dowiadujesz się szczegółów i unikasz nalotu."
+                followUpText: "Dowiadujesz się szczegółów i unikasz nalotu.",
                 showAlert: true
             },
             {
@@ -696,7 +696,7 @@ const EVENTS_DATA = [
                     risk: -20,
                     money: -100000
                 },
-                followUpText: "Tydzień bez dochodów, ale bezpiecznie."
+                followUpText: "Tydzień bez dochodów, ale bezpiecznie.",
                 showAlert: true
             },
             {
@@ -704,7 +704,7 @@ const EVENTS_DATA = [
                 effects: {
                     risk: 20
                 },
-                followUpText: "Może to tylko straszenie..."
+                followUpText: "Może to tylko straszenie...",
                 showAlert: true
             }
         ]
@@ -728,7 +728,7 @@ const EVENTS_DATA = [
                     loyalty: 20,
                     morale: 15
                 },
-                followUpText: "Zastanawia się... \"Okej, dam temu jeszcze szansę.\""
+                followUpText: "Zastanawia się... \"Okej, dam temu jeszcze szansę.\"",
                 showAlert: true
             },
             {
@@ -737,7 +737,7 @@ const EVENTS_DATA = [
                     loyalty: 10,
                     morale: 5
                 },
-                followUpText: "Twoje słowa działają. Zostaje, ale niepewnie."
+                followUpText: "Twoje słowa działają. Zostaje, ale niepewnie.",
                 showAlert: true
             },
             {
@@ -747,7 +747,7 @@ const EVENTS_DATA = [
                     morale: -20,
                     risk: 15
                 },
-                followUpText: "Zostaje, ale wyraźnie cię nienawidzi."
+                followUpText: "Zostaje, ale wyraźnie cię nienawidzi.",
                 showAlert: true
             },
             {
@@ -756,7 +756,7 @@ const EVENTS_DATA = [
                     removeGirl: true,
                     reputation: -5
                 },
-                followUpText: "{girlName} pakuje rzeczy i wychodzi..."
+                followUpText: "{girlName} pakuje rzeczy i wychodzi...",
                 showAlert: true
             }
         ]
@@ -782,7 +782,7 @@ const EVENTS_DATA = [
                     morale: 20,
                     loyalty: 15
                 },
-                followUpText: "Dziewczyny są zachwycone twoją uczciwością!"
+                followUpText: "Dziewczyny są zachwycone twoją uczciwością!",
                 showAlert: true
             },
             {
@@ -792,7 +792,7 @@ const EVENTS_DATA = [
                     morale: -10,
                     loyalty: -10
                 },
-                followUpText: "Dziewczyny dowiadują się i tracą do ciebie zaufanie..."
+                followUpText: "Dziewczyny dowiadują się i tracą do ciebie zaufanie...",
                 showAlert: true
             },
             {
@@ -802,7 +802,7 @@ const EVENTS_DATA = [
                     morale: 5,
                     loyalty: 5
                 },
-                followUpText: "Sprawiedliwy podział. Wszyscy zadowoleni."
+                followUpText: "Sprawiedliwy podział. Wszyscy zadowoleni.",
                 showAlert: true
             }
         ]
@@ -824,7 +824,7 @@ const EVENTS_DATA = [
                     reputation: 15,
                     morale: 10
                 },
-                followUpText: "Festiwal to sukces! Reputacja szkoły rośnie."
+                followUpText: "Festiwal to sukces! Reputacja szkoły rośnie.",
                 showAlert: true
             },
             {
@@ -833,13 +833,13 @@ const EVENTS_DATA = [
                     addGirl: true,
                     reputation: 5
                 },
-                followUpText: "Spotykasz zdolną uczennicę zainteresowaną pracą."
+                followUpText: "Spotykasz zdolną uczennicę zainteresowaną pracą.",
                 showAlert: true
             },
             {
                 text: "Pomiń festiwal",
                 effects: {},
-                followUpText: "Festiwal odbywa się bez twojego udziału."
+                followUpText: "Festiwal odbywa się bez twojego udziału.",
                 showAlert: true
             }
         ]
