@@ -64,9 +64,9 @@
             <div style="display: flex; flex-wrap: wrap;">
                 <button id="pause-btn" class="time-btn" style="flex: 1 1 100%;">▶ Start</button>
                 <button id="speed-1x" class="time-btn active">1x</button>
-                <button id="speed-5x" class="time-btn">5x</button>
                 <button id="speed-10x" class="time-btn">10x</button>
                 <button id="speed-30x" class="time-btn">30x</button>
+                <button id="speed-100x" class="time-btn">100x</button>
             </div>
         </div>
 
@@ -202,7 +202,7 @@ function setupUI() {
         document.getElementById('pause-btn').textContent = gameState.isPaused ? '▶ Start' : '⏸ Pauza';
     };
 
-    ['1','5','10','30'].forEach(s => {
+    ['1','10','30','100'].forEach(s => {
         document.getElementById(`speed-${s}x`).onclick = () => {
             gameState.gameSpeed = parseInt(s);
             document.querySelectorAll('.time-btn:not(#pause-btn)').forEach(b => b.classList.remove('active'));
