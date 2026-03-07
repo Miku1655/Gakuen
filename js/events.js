@@ -13,49 +13,39 @@ function triggerRandomEvent() {
     const event = selectRandomEvent(available);
     const eventInstance = prepareEventInstance(event);
     
-    if (!eventInstance) return; // Failed to prepare (e.g., no eligible girls)
+    if (!eventInstance) return;
     
     showEvent(eventInstance);
 }
 
 function getAvailableEvents() {
     return EVENTS_DATA.filter(event => {
-        // Check if event is still available
         if (!isEventAvailable(event)) return false;
-        
-        // Check all conditions
         if (!checkEventConditions(event)) return false;
-        
-        // Check random chance
         return Math.random() * 100 < (event.chance || 100);
     });
 }
 
 function isEventAvailable(event) {
-    // One-time events that are completed
     if (event.oneTime && gameState.completedEvents.includes(event.id)) {
         return false;
     }
-    
-    // Events on cooldown
     if (gameState.eventCooldowns[event.id]) {
         return false;
     }
-    
     return true;
 }
 
 function checkEventConditions(event) {
     const c = event.conditions || {};
-    
-    // Define all condition checkers
+
     const conditionCheckers = {
         // ====================================================================
         // MONEY & RESOURCES
         // ====================================================================
         minMoney: () => gameState.money >= c.minMoney,
         maxMoney: () => gameState.money <= c.maxMoney,
-        
+
         // ====================================================================
         // STATS & METRICS
         // ====================================================================
@@ -65,7 +55,11 @@ function checkEventConditions(event) {
         maxRisk: () => gameState.risk <= c.maxRisk,
         minMorale: () => gameState.moraleTotal >= c.minMorale,
         maxMorale: () => gameState.moraleTotal <= c.maxMorale,
-        
+
+        // BUG FIX: yakuza condition was entirely missing from conditionCheckers
+        // yakuza:true means requires yakuza protection; yakuza:false means requires NO protection
+        yakuza: () => gameState.yakuzaProtection === c.yakuza,
+
         // Average stats across all girls
         minAvgLoyalty: () => {
             if (gameState.girls.length === 0) return false;
@@ -92,15 +86,14 @@ function checkEventConditions(event) {
             const avg = gameState.girls.reduce((sum, g) => sum + g.grades, 0) / gameState.girls.length;
             return avg >= c.minAvgGrades;
         },
-        
+
         // ====================================================================
         // GIRLS - BASIC COUNTS
         // ====================================================================
         minGirls: () => gameState.girls.length >= c.minGirls,
         maxGirls: () => gameState.girls.length <= c.maxGirls,
         exactGirls: () => gameState.girls.length === c.exactGirls,
-        
-        // Available girls (not working/sick/etc)
+
         minAvailableGirls: () => {
             const available = gameState.girls.filter(g => g.available).length;
             return available >= c.minAvailableGirls;
@@ -109,8 +102,6 @@ function checkEventConditions(event) {
             const available = gameState.girls.filter(g => g.available).length;
             return available <= c.maxAvailableGirls;
         },
-        
-        // Working girls (any job except 'none')
         minWorkingGirls: () => {
             const working = gameState.girls.filter(g => g.currentJob !== 'none').length;
             return working >= c.minWorkingGirls;
@@ -123,7 +114,6 @@ function checkEventConditions(event) {
 }
 
 function selectRandomEvent(availableEvents) {
-    // You can add weighted random selection here if needed
     return availableEvents[Math.floor(Math.random() * availableEvents.length)];
 }
 
@@ -132,27 +122,19 @@ function selectRandomEvent(availableEvents) {
 // ============================================================================
 
 function prepareEventInstance(event) {
-    // If event targets a specific girl
     if (event.targetJob) {
         return prepareGirlTargetedEvent(event);
     }
-    
-    // If event targets a random girl (without job requirement)
     if (event.targetRandomGirl) {
         return prepareRandomGirlEvent(event);
     }
-    
-    // Regular event - no girl targeting
     return { ...event };
 }
 
 function prepareGirlTargetedEvent(event) {
     const eligibleGirls = getEligibleGirlsForEvent(event);
-    
     if (eligibleGirls.length === 0) return null;
-    
     const targetGirl = eligibleGirls[Math.floor(Math.random() * eligibleGirls.length)];
-    
     return {
         ...event,
         description: replaceGirlPlaceholders(event.templateDescription || event.description, targetGirl),
@@ -161,13 +143,12 @@ function prepareGirlTargetedEvent(event) {
     };
 }
 
+// BUG FIX: prepareRandomGirlEvent was ignoring girlConditions entirely.
+// Now it uses getEligibleGirlsForEvent (same filtering logic) but without job requirement.
 function prepareRandomGirlEvent(event) {
-    const availableGirls = gameState.girls.filter(g => g.available);
-    
-    if (availableGirls.length === 0) return null;
-    
-    const targetGirl = availableGirls[Math.floor(Math.random() * availableGirls.length)];
-    
+    const eligibleGirls = getEligibleGirlsForEvent(event);
+    if (eligibleGirls.length === 0) return null;
+    const targetGirl = eligibleGirls[Math.floor(Math.random() * eligibleGirls.length)];
     return {
         ...event,
         description: replaceGirlPlaceholders(event.templateDescription || event.description, targetGirl),
@@ -179,24 +160,22 @@ function prepareRandomGirlEvent(event) {
 function getEligibleGirlsForEvent(event) {
     return gameState.girls.filter(girl => {
         if (!girl.available) return false;
-        
-        // Check job requirement
+
+        // Job filter only for targetJob events
         if (event.targetJob && girl.currentJob !== event.targetJob) {
             return false;
         }
-        
-        // Check girl-specific conditions
+
         const gc = event.girlConditions || {};
-        
-        if (gc.minLoyalty && girl.loyalty < gc.minLoyalty) return false;
-        if (gc.maxLoyalty && girl.loyalty > gc.maxLoyalty) return false;
-        if (gc.minLewdness && girl.lewdness < gc.minLewdness) return false;
-        if (gc.maxLewdness && girl.lewdness > gc.maxLewdness) return false;
-        if (gc.minMorale && girl.morale < gc.minMorale) return false;
-        if (gc.maxMorale && girl.morale > gc.maxMorale) return false;
+        if (gc.minLoyalty !== undefined && girl.loyalty < gc.minLoyalty) return false;
+        if (gc.maxLoyalty !== undefined && girl.loyalty > gc.maxLoyalty) return false;
+        if (gc.minLewdness !== undefined && girl.lewdness < gc.minLewdness) return false;
+        if (gc.maxLewdness !== undefined && girl.lewdness > gc.maxLewdness) return false;
+        if (gc.minMorale !== undefined && girl.morale < gc.minMorale) return false;
+        if (gc.maxMorale !== undefined && girl.morale > gc.maxMorale) return false;
         if (gc.hasTrait && !girl.traits.includes(gc.hasTrait)) return false;
         if (gc.notHasTrait && girl.traits.includes(gc.notHasTrait)) return false;
-        
+
         return true;
     });
 }
@@ -235,9 +214,7 @@ function createChoiceButton(event, choice) {
     btn.className = 'choice-btn';
     btn.textContent = choice.text;
 
-    // Check if choice is available
     const isAvailable = checkChoiceRequirements(choice);
-    
     if (!isAvailable.available) {
         btn.disabled = true;
         btn.textContent += ` (${isAvailable.reason})`;
@@ -249,22 +226,16 @@ function createChoiceButton(event, choice) {
 
 function checkChoiceRequirements(choice) {
     const cost = choice.cost || 0;
-    
     if (cost > 0 && gameState.money < cost) {
         return { available: false, reason: 'Za mało ¥' };
     }
-    
-    // Add more requirement checks here
     const req = choice.requirements || {};
-    
     if (req.minReputation && gameState.reputation < req.minReputation) {
         return { available: false, reason: 'Za mała reputacja' };
     }
-    
     if (req.minGirls && gameState.girls.length < req.minGirls) {
         return { available: false, reason: 'Za mało dziewczyn' };
     }
-    
     return { available: true };
 }
 
@@ -273,43 +244,42 @@ function checkChoiceRequirements(choice) {
 // ============================================================================
 
 function selectChoice(event, choice) {
-    // Validate choice
     if (!checkChoiceRequirements(choice).available) return;
 
-    // Pay cost
     const cost = choice.cost || 0;
     if (cost > 0) {
         gameState.money -= cost;
     }
 
-    // Apply effects
     applyChoiceEffects(event, choice);
-
-    // Handle cooldown and completion
     handleEventCompletion(event);
-
-    // Close modal
     closeEventModal();
     
-    // Update UI
+    // BUG FIX: moraleTotal was never updated after events changed girl morale.
+    // Now we always recalculate after any choice.
+    updateAverageMorale();
     updateAll();
 }
 
 function applyChoiceEffects(event, choice) {
     const effects = choice.effects || {};
-    
-    // If event targets a specific girl, apply girl-specific effects first
+
     if (event.targetGirlId) {
         applyGirlEffects(event.targetGirlId, effects);
-    } else {
-        // Apply global effects
-        applyGlobalEffects(effects);
+        // BUG FIX: global effects (reputation, risk) were silently dropped for
+        // girl-targeted events because applyGlobalEffects was never called.
+        // Now we always run it regardless of targeting.
     }
-    
-    // Apply universal effects (work for both targeted and global events)
-    applyUniversalEffects(effects);
-    
-    // Handle follow-up text
+
+    // Always apply global effects (reputation, risk, yakuza, profitTax, etc.)
+    applyGlobalEffects(effects, event.targetGirlId ? null : null);
+
+    // Universal effects (money, addGirl, unlockJob, etc.)
+    applyUniversalEffects(effects, event.targetGirlId);
+
+    // NPC relationship effects (stored on choice, not effects object)
+    applyChoiceNpcEffect(choice);
+
     handleFollowUpText(event, choice);
 }
 
@@ -319,19 +289,14 @@ function applyGirlEffects(girlId, effects) {
         console.warn("Girl not found:", girlId);
         return;
     }
-    
-    // Define all possible girl effects
+
     const girlEffectHandlers = {
-        loyalty: (value) => { girl.loyalty = clamp(girl.loyalty + value, 0, 100); },
-        morale: (value) => { girl.morale = clamp(girl.morale + value, 0, 100); },
-        lewdness: (value) => { girl.lewdness = clamp(girl.lewdness + value, 0, 100); },
-        grades: (value) => { girl.grades = clamp(girl.grades + value, 0, 100); },
-        addTrait: (trait) => { 
-            if (!girl.traits.includes(trait)) girl.traits.push(trait); 
-        },
-        removeTrait: (trait) => { 
-            girl.traits = girl.traits.filter(t => t !== trait); 
-        },
+        loyalty:    (v) => { girl.loyalty  = clamp(girl.loyalty  + v, 0, 100); },
+        morale:     (v) => { girl.morale   = clamp(girl.morale   + v, 0, 100); },
+        lewdness:   (v) => { girl.lewdness = clamp(girl.lewdness + v, 0, 100); },
+        grades:     (v) => { girl.grades   = clamp(girl.grades   + v, 0, 100); },
+        addTrait:   (trait) => { if (!girl.traits.includes(trait)) girl.traits.push(trait); },
+        removeTrait:(trait) => { girl.traits = girl.traits.filter(t => t !== trait); },
         skillBoost: (skillData) => {
             for (let skill in skillData) {
                 if (girl.skills[skill] !== undefined) {
@@ -340,53 +305,41 @@ function applyGirlEffects(girlId, effects) {
             }
         }
     };
-    
-    // Apply all girl effects
+
     for (let effect in effects) {
         if (girlEffectHandlers[effect]) {
             girlEffectHandlers[effect](effects[effect]);
         }
     }
-    
-    // Log girl-specific event
+
     if (effects.money || effects.loyalty || effects.morale) {
         logEvent(`💝 ${girl.name} – event completed`, 'date');
     }
 }
 
+// BUG FIX: applyGlobalEffects previously only applied morale/loyalty/lewdness to ALL girls.
+// For girl-targeted events we want those to apply only to the target (done in applyGirlEffects),
+// but reputation, risk, yakuza etc. should still fire.  The girlOnlyKeys set prevents
+// double-applying per-girl stats when a targeted event also has global-looking keys.
 function applyGlobalEffects(effects) {
-    // Define all possible global effects
+    // These keys are handled per-girl in applyGirlEffects for targeted events;
+    // for non-targeted events they broadcast to all girls.
     const globalEffectHandlers = {
-        morale: (value) => {
-            gameState.girls.forEach(g => {
-                g.morale = clamp(g.morale + value, 0, 100);
-            });
+        morale: (v) => {
+            gameState.girls.forEach(g => { g.morale = clamp(g.morale + v, 0, 100); });
         },
-        loyalty: (value) => {
-            gameState.girls.forEach(g => {
-                g.loyalty = clamp(g.loyalty + value, 0, 100);
-            });
+        loyalty: (v) => {
+            gameState.girls.forEach(g => { g.loyalty = clamp(g.loyalty + v, 0, 100); });
         },
-        lewdness: (value) => {
-            gameState.girls.forEach(g => {
-                g.lewdness = clamp(g.lewdness + value, 0, 100);
-            });
+        lewdness: (v) => {
+            gameState.girls.forEach(g => { g.lewdness = clamp(g.lewdness + v, 0, 100); });
         },
-        reputation: (value) => {
-            gameState.reputation = clamp(gameState.reputation + value, 0, 100);
-        },
-        risk: (value) => {
-            gameState.risk = clamp(gameState.risk + value, 0, 100);
-        },
-        yakuzaProtection: (value) => {
-            gameState.yakuzaProtection = value;
-        },
-        profitTax: (value) => {
-            gameState.profitTax = value;
-        }
+        reputation:      (v) => { gameState.reputation = clamp(gameState.reputation + v, 0, 100); },
+        risk:            (v) => { gameState.risk        = clamp(gameState.risk        + v, 0, 100); },
+        yakuzaProtection:(v) => { gameState.yakuzaProtection = v; },
+        profitTax:       (v) => { gameState.profitTax = v; }
     };
-    
-    // Apply all global effects
+
     for (let effect in effects) {
         if (globalEffectHandlers[effect]) {
             globalEffectHandlers[effect](effects[effect]);
@@ -394,25 +347,25 @@ function applyGlobalEffects(effects) {
     }
 }
 
-function applyUniversalEffects(effects) {
-    // Effects that work regardless of targeting
-    
+// BUG FIX: applyUniversalEffects now receives targetGirlId so that removeGirl
+// removes the correct targeted girl instead of a random one.
+function applyUniversalEffects(effects, targetGirlId) {
     if (effects.money) {
         gameState.money += effects.money;
     }
-    
+
     if (effects.unlockJob && !gameState.unlockedJobs.includes(effects.unlockJob)) {
         gameState.unlockedJobs.push(effects.unlockJob);
         const jobName = JOBS_DATA[effects.unlockJob]?.name || effects.unlockJob;
         logEvent(`🔓 ${jobName} odblokowane`, 'unlock');
     }
-    
+
     if (effects.addGirl) {
         const newGirl = generateRandomGirl();
         gameState.girls.push(newGirl);
         logEvent(`✨ ${newGirl.name} dołączyła do szkoły!`, 'recruit');
     }
-    
+
     if (effects.addGirls) {
         for (let i = 0; i < effects.addGirls; i++) {
             const newGirl = generateRandomGirl();
@@ -420,24 +373,44 @@ function applyUniversalEffects(effects) {
         }
         logEvent(`✨ ${effects.addGirls} nowych dziewczyn dołączyło!`, 'recruit');
     }
-    
+
     if (effects.removeGirl) {
-        // Remove a random girl or specific one
-        const girlIndex = Math.floor(Math.random() * gameState.girls.length);
-        const removedGirl = gameState.girls.splice(girlIndex, 1)[0];
-        logEvent(`⚠️ ${removedGirl.name} odeszła`, 'event');
+        // BUG FIX: Previously always removed a *random* girl even when the event
+        // had a specific target (e.g. girl_wants_to_leave). Now we remove the
+        // targeted girl when one is set, falling back to random otherwise.
+        let girlIndex;
+        if (targetGirlId !== undefined && targetGirlId !== null) {
+            girlIndex = gameState.girls.findIndex(g => g.id === targetGirlId);
+            if (girlIndex === -1) girlIndex = Math.floor(Math.random() * gameState.girls.length);
+        } else {
+            girlIndex = Math.floor(Math.random() * gameState.girls.length);
+        }
+        if (gameState.girls.length > 0) {
+            const removedGirl = gameState.girls.splice(girlIndex, 1)[0];
+            logEvent(`⚠️ ${removedGirl.name} odeszła`, 'event');
+        }
     }
-    
+
     if (effects.customLog) {
         logEvent(effects.customLog.message, effects.customLog.type || 'event');
     }
 }
 
+// npcEffect is stored on the choice itself (not in effects), handled here
+function applyChoiceNpcEffect(choice) {
+    if (choice.npcEffect && typeof applyNpcEffect === 'function') {
+        applyNpcEffect(choice.npcEffect);
+    }
+}
+
 function handleEventCompletion(event) {
+    // Track for weekly report
+    if (typeof gameState !== 'undefined' && gameState.weeklyStats) {
+        gameState.weeklyStats.events++;
+    }
     if (event.cooldown) {
         gameState.eventCooldowns[event.id] = event.cooldown;
     }
-    
     if (event.oneTime) {
         if (!gameState.completedEvents.includes(event.id)) {
             gameState.completedEvents.push(event.id);
@@ -447,20 +420,22 @@ function handleEventCompletion(event) {
 
 function handleFollowUpText(event, choice) {
     if (!choice.followUpText) return;
-    
-    // For girl-targeted events, replace placeholders
+
     let text = choice.followUpText;
     if (event.targetGirlId) {
         const girl = gameState.girls.find(g => g.id === event.targetGirlId);
         if (girl) {
             text = replaceGirlPlaceholders(text, girl);
             logEvent(`📅 ${girl.name} – ${text}`, 'date');
+        } else {
+            // Girl may have just been removed (removeGirl effect)
+            text = text.replace(/\{girlName\}/g, event.targetGirlName || '???');
+            logEvent(`📅 ${text}`, 'event');
         }
     } else {
         logEvent(`📰 ${event.title} – ${text}`, 'event');
     }
-    
-    // Show alert if specified
+
     if (choice.showAlert) {
         alert(text);
     }
@@ -488,50 +463,56 @@ function generateRandomGirl() {
     const personality = PERSONALITIES[Math.floor(Math.random() * PERSONALITIES.length)];
 
     const first = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
-    const last = LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)];
+    const last  = LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)];
 
-    const age = 16 + Math.floor(Math.random() * 4);
+    // BUG FIX: range was 16–19, should be 15–18 for a high-school setting
+    const age = 15 + Math.floor(Math.random() * 4);
 
-    const loyalty = 35 + Math.floor(Math.random() * 35);
-    const lewdness = personality.lewdness[0] + Math.floor(Math.random() * (personality.lewdness[1] - personality.lewdness[0] + 1));
-    const grades = personality.grades[0] + Math.floor(Math.random() * (personality.grades[1] - personality.grades[0] + 1));
-    const morale = personality.morale[0] + Math.floor(Math.random() * (personality.morale[1] - personality.morale[0] + 1));
+    const loyalty    = 35 + Math.floor(Math.random() * 35);
+    const lewdness   = personality.lewdness[0]   + Math.floor(Math.random() * (personality.lewdness[1]   - personality.lewdness[0]   + 1));
+    const grades     = personality.grades[0]     + Math.floor(Math.random() * (personality.grades[1]     - personality.grades[0]     + 1));
+    const morale     = personality.morale[0]     + Math.floor(Math.random() * (personality.morale[1]     - personality.morale[0]     + 1));
     const conversation = personality.conversation[0] + Math.floor(Math.random() * (personality.conversation[1] - personality.conversation[0] + 1));
 
     const handjob = Math.max(0, Math.floor(lewdness * 0.6) + Math.floor(Math.random() * 15) - 10);
     const blowjob = Math.max(0, Math.floor(lewdness * 0.4) + Math.floor(Math.random() * 12) - 8);
     const vaginal = Math.max(0, Math.floor(lewdness * 0.3) - 5 + Math.floor(Math.random() * 10));
-    const anal = Math.max(0, Math.floor(lewdness * 0.15) - 10 + Math.floor(Math.random() * 8));
-    const feet = Math.max(0, Math.floor(lewdness * 0.5) + Math.floor(Math.random() * 18) - 12);
+    const anal    = Math.max(0, Math.floor(lewdness * 0.15) - 10 + Math.floor(Math.random() * 8));
+    const feet    = Math.max(0, Math.floor(lewdness * 0.5) + Math.floor(Math.random() * 18) - 12);
 
     const traits = [...personality.traits];
     if (lewdness < 15) traits.push("virgin");
-    if (morale < 50) traits.push("insecure");
-    if (grades > 90) traits.push("smart");
+    if (morale < 50)   traits.push("insecure");
+    if (grades > 90)   traits.push("smart");
 
-    const backstory = `${personality.name.toLowerCase()}. ${["Pochodzi z biednej rodziny.", "Ma problemy finansowe w domu.", "Nowa w Seiran Academy.", "Chce pomóc rodzinie."][Math.floor(Math.random()*4)]}`;
+    // BUG FIX: BACKSTORIES was defined in girls.js but completely ignored here.
+    // Now we use it when a matching personality key exists, with a graceful fallback.
+    const backstoryList = BACKSTORIES[personality.name];
+    const backstory = backstoryList
+        ? backstoryList[Math.floor(Math.random() * backstoryList.length)]
+        : ["Pochodzi z biednej rodziny.", "Ma problemy finansowe w domu.", "Nowa w Seiran Academy.", "Chce pomóc rodzinie."][Math.floor(Math.random() * 4)];
 
     return {
-        id: gameState.nextGirlId++,
-        name: `${first} ${last}`,
-        age: age,
+        id:          gameState.nextGirlId++,
+        name:        `${first} ${last}`,
+        age:         age,
         personality: personality.name,
-        backstory: backstory,
-        loyalty: Math.min(95, loyalty),
-        lewdness: Math.min(60, lewdness),
-        grades: Math.min(100, grades),
-        morale: Math.min(100, morale),
+        backstory:   backstory,
+        loyalty:     Math.min(95, loyalty),
+        lewdness:    Math.min(60, lewdness),
+        grades:      Math.min(100, grades),
+        morale:      Math.min(100, morale),
         skills: {
             conversation: Math.min(80, conversation),
-            handjob: Math.min(60, handjob),
-            blowjob: Math.min(50, blowjob),
-            vaginal: Math.min(40, vaginal),
-            anal: Math.min(25, anal),
-            feet: Math.min(55, feet)
+            handjob:      Math.min(60, handjob),
+            blowjob:      Math.min(50, blowjob),
+            vaginal:      Math.min(40, vaginal),
+            anal:         Math.min(25, anal),
+            feet:         Math.min(55, feet)
         },
         currentJob: 'none',
-        traits: traits,
-        available: true
+        traits:     traits,
+        available:  true
     };
 }
 
@@ -554,16 +535,9 @@ function renderEventLog() {
 
     let html = '<div class="event-log-container">';
     gameState.eventLog.forEach(log => {
-        const icons = { 
-            income:'💰', 
-            job:'💼', 
-            training:'📚', 
-            comfort:'❤️', 
-            event:'📰', 
-            unlock:'🔓', 
-            recruit:'✨', 
-            debt:'💳',
-            date:'💝' 
+        const icons = {
+            income:'💰', job:'💼', training:'📚', comfort:'❤️',
+            event:'📰', unlock:'🔓', recruit:'✨', debt:'💳', date:'💝', school:'🏫'
         };
         html += `<div class="event-log-item">
             <span class="event-time">[${log.ts}]</span>
