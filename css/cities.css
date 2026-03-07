@@ -1,0 +1,255 @@
+/* ============================================================================
+   CITIES & SCHOOLS SYSTEM — Additional Styles
+   ============================================================================ */
+
+/* ---- City cards ---- */
+.city-card-locked {
+    opacity: 0.55;
+    filter: grayscale(0.4);
+}
+
+/* ---- School tabs in girls/school pages ---- */
+#girls-school-selector .action-btn,
+#school-selector-bar .action-btn {
+    border-radius: 20px;
+    font-size: 0.85em;
+    padding: 6px 14px;
+}
+
+/* ---- Empire section in business ---- */
+.business-section {
+    background: rgba(22, 33, 62, 0.6);
+    border: 1px solid rgba(233, 69, 96, 0.3);
+    border-radius: 8px;
+    padding: 20px;
+    margin: 12px 0;
+}
+
+.business-section h3 {
+    margin-top: 0;
+}
+
+/* ---- Girl Profile Modal ---- */
+#girl-profile-modal .modal-content {
+    max-width: 620px;
+}
+
+#girl-profile-content h3 {
+    color: var(--text-primary);
+}
+
+/* ---- Milestone modal ---- */
+#milestone-modal .modal-content {
+    background: linear-gradient(135deg, #1a1a2e, #2d1b4e);
+    border-color: #9b59b6;
+}
+
+#milestone-icon {
+    animation: milestone-pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes milestone-pulse {
+    from { transform: scale(1);   filter: brightness(1); }
+    to   { transform: scale(1.1); filter: brightness(1.3); }
+}
+
+/* ---- Status badges additions ---- */
+.status-badge {
+    display: inline-block;
+    font-size: 0.78em;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-right: 4px;
+    margin-bottom: 2px;
+}
+
+.status-idle    { background: rgba(149,165,166,0.2); color: #95a5a6; }
+.status-working { background: rgba(52,152,219,0.2);  color: #3498db; }
+.status-danger  { background: rgba(231,76,60,0.2);   color: #e74c3c; }
+.status-stressed{ background: rgba(230,126,34,0.2);  color: #e67e22; }
+
+/* ---- Trait tags ---- */
+.trait-tag {
+    display: inline-block;
+    background: rgba(233,69,96,0.15);
+    border: 1px solid rgba(233,69,96,0.3);
+    color: var(--text-secondary);
+    font-size: 0.75em;
+    padding: 1px 7px;
+    border-radius: 8px;
+    margin: 1px 2px;
+}
+
+/* ---- Bond badge ---- */
+.bond-badge {
+    display: inline-block;
+    background: rgba(155,89,182,0.2);
+    border: 1px solid rgba(155,89,182,0.4);
+    color: #c39bd3;
+    font-size: 0.78em;
+    padding: 3px 10px;
+    border-radius: 12px;
+    white-space: nowrap;
+}
+
+/* ---- Stat color classes ---- */
+.stat-high { color: var(--success) !important; }
+.stat-low  { color: var(--danger)  !important; }
+
+.progress-fill.stat-high { background: var(--success) !important; }
+.progress-fill.stat-low  { background: var(--danger)  !important; }
+
+/* ---- Investment card ---- */
+.investment-card {
+    background: rgba(22, 33, 62, 0.6);
+    border: 1px solid rgba(233, 69, 96, 0.3);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 10px 0;
+    transition: border-color 0.2s;
+}
+
+.investment-card:hover {
+    border-color: rgba(233, 69, 96, 0.6);
+}
+
+.investment-card h4 {
+    color: var(--accent-secondary);
+    margin: 0 0 6px 0;
+    font-size: 1em;
+}
+
+/* ---- Transfer girl prompt style ---- */
+.transfer-btn {
+    background: rgba(52,152,219,0.2);
+    border: 1px solid rgba(52,152,219,0.4);
+    color: #3498db;
+}
+
+/* ---- Map page ---- */
+#cities-overview .dashboard-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+#cities-overview .dashboard-card:hover {
+    transform: translateY(-3px);
+}
+
+/* ---- Menu school label ---- */
+#menu-school-label {
+    color: rgba(255,255,255,0.7);
+    font-size: 0.72em;
+    margin-top: 3px;
+    letter-spacing: 0.3px;
+}
+
+/* ---- City flavor badge in girl card ---- */
+.city-income-badge {
+    display: inline-block;
+    font-size: 0.78em;
+    padding: 1px 6px;
+    border-radius: 6px;
+    margin-left: 6px;
+}
+
+/* ---- Diary entry block ---- */
+.diary-entry {
+    background: rgba(22,33,62,0.8);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 6px;
+    padding: 14px;
+    margin: 12px 0;
+    font-style: italic;
+    font-size: 0.92em;
+    line-height: 1.65;
+    color: var(--text-secondary);
+}
+
+.diary-entry::before {
+    content: '📓 ';
+}
+
+/* ---- Profile quote block ---- */
+.profile-quote {
+    background: rgba(155,89,182,0.1);
+    border-left: 3px solid #9b59b6;
+    padding: 12px 16px;
+    border-radius: 0 6px 6px 0;
+    font-style: italic;
+    margin: 12px 0;
+    line-height: 1.6;
+}
+
+/* ---- Toast system ---- */
+#toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.toast {
+    background: rgba(22,33,62,0.95);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--text-primary);
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    opacity: 0;
+    transform: translateX(40px);
+    transition: all 0.35s ease;
+    max-width: 320px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.toast.toast-show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-success { border-color: var(--success); }
+.toast-warning { border-color: var(--warning); }
+.toast-error   { border-color: var(--danger); }
+.toast-info    { border-color: rgba(52,152,219,0.6); }
+
+/* ---- Lore / Atmosphere text ---- */
+#dash-lore-text {
+    line-height: 1.5;
+    min-height: 36px;
+}
+
+/* ---- Milestone progress on girl card ---- */
+.milestone-progress {
+    font-size: 0.82em;
+    color: var(--text-secondary);
+    margin: 6px 0;
+}
+
+/* ---- School detail box ---- */
+.school-detail-box {
+    border-radius: 8px;
+    padding: 14px;
+    margin-bottom: 16px;
+}
+
+/* ---- Girls school selector active state ---- */
+.school-tab-active {
+    background: var(--accent-primary) !important;
+    border-color: var(--accent-primary) !important;
+}
+
+/* ---- Empire map small items ---- */
+.empire-city-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 5px;
+    margin: 6px 0;
+    font-size: 0.9em;
+}
