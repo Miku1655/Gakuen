@@ -1,0 +1,216 @@
+/* ============================================================================
+   EXPANSION CSS
+   Toast notifications, badges, status indicators, NPC UI, achievement UI
+   ============================================================================ */
+
+/* ============================================================
+   TOAST NOTIFICATIONS
+   ============================================================ */
+#toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column-reverse;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.toast {
+    background: var(--bg-light);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--text-primary);
+    padding: 12px 18px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    max-width: 300px;
+    opacity: 0;
+    transform: translateX(30px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    pointer-events: none;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+
+.toast.toast-show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast-success { border-left: 4px solid var(--success);  background: rgba(39,174,96,0.15); }
+.toast-info    { border-left: 4px solid var(--accent-primary); background: rgba(233,69,96,0.12); }
+.toast-warning { border-left: 4px solid var(--warning);  background: rgba(243,156,18,0.12); }
+.toast-danger  { border-left: 4px solid var(--danger);   background: rgba(231,76,60,0.15); }
+
+/* ============================================================
+   BOND BADGE (girl relationship with player)
+   ============================================================ */
+.bond-badge {
+    font-size: 0.75em;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: rgba(233,69,96,0.2);
+    border: 1px solid rgba(233,69,96,0.4);
+    color: var(--accent-primary);
+    white-space: nowrap;
+    cursor: help;
+}
+
+/* ============================================================
+   STATUS BADGES (on girl cards)
+   ============================================================ */
+.status-badge {
+    display: inline-block;
+    font-size: 0.78em;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: 600;
+    margin-right: 4px;
+}
+
+.status-idle    { background: rgba(149,165,166,0.2); color: #bdc3c7; border: 1px solid rgba(149,165,166,0.3); }
+.status-working { background: rgba(52,152,219,0.2);  color: #74b9ff; border: 1px solid rgba(52,152,219,0.3); }
+.status-danger  { background: rgba(231,76,60,0.2);   color: #ff7675; border: 1px solid rgba(231,76,60,0.3); }
+.status-stressed{ background: rgba(243,156,18,0.2);  color: #fdcb6e; border: 1px solid rgba(243,156,18,0.4); }
+
+/* ============================================================
+   TRAIT TAGS
+   ============================================================ */
+.trait-tag {
+    display: inline-block;
+    font-size: 0.75em;
+    padding: 2px 7px;
+    border-radius: 10px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: var(--text-secondary);
+    margin: 2px 1px;
+}
+
+/* ============================================================
+   STAT COLORIZATION
+   ============================================================ */
+.value.stat-high { color: var(--success) !important; }
+.value.stat-low  { color: var(--danger)  !important; }
+
+.progress-fill.stat-high { background: linear-gradient(90deg, var(--success), #2ecc71); }
+.progress-fill.stat-low  { background: linear-gradient(90deg, var(--danger), #e74c3c); }
+
+/* ============================================================
+   GIRL CARD - expanded layout polish
+   ============================================================ */
+.girl-card details summary {
+    user-select: none;
+    padding: 4px 0;
+}
+
+.girl-card details[open] summary {
+    margin-bottom: 5px;
+    color: var(--accent-secondary) !important;
+}
+
+/* ============================================================
+   ACHIEVEMENT MODAL
+   ============================================================ */
+#achievement-modal .modal-content {
+    border-color: var(--accent-secondary);
+    box-shadow: 0 0 40px rgba(243,156,18,0.4);
+    animation: achievePop 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+}
+
+@keyframes achievePop {
+    from { transform: scale(0.7); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ============================================================
+   WEEKLY REPORT MODAL
+   ============================================================ */
+#weekly-modal .modal-content {
+    border-color: var(--accent-secondary);
+}
+
+/* ============================================================
+   TRAINING MODAL
+   ============================================================ */
+#training-modal .modal-content {
+    max-width: 640px;
+}
+
+/* ============================================================
+   NPC RELATIONSHIP BAR
+   ============================================================ */
+.npc-rel-bar {
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255,255,255,0.1);
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+/* ============================================================
+   DASHBOARD LORE TEXT FADE
+   ============================================================ */
+#dash-lore-text {
+    transition: opacity 0.8s ease;
+    border-left: 2px solid rgba(233,69,96,0.4);
+    padding-left: 10px;
+}
+
+/* ============================================================
+   BUSINESS SECTION
+   ============================================================ */
+.business-section {
+    background: rgba(22,33,62,0.6);
+    border: 1px solid rgba(233,69,96,0.2);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.business-section h3 { margin-top: 0; }
+.business-section ul { padding-left: 20px; line-height: 1.8; }
+
+/* ============================================================
+   INVESTMENT CARD – tighter for training modal
+   ============================================================ */
+#training-options .investment-card {
+    margin-bottom: 12px;
+}
+
+#training-options .investment-card:last-child {
+    margin-bottom: 0;
+}
+
+/* ============================================================
+   EVENT LOG – extra type colors
+   ============================================================ */
+.event-log-item[data-type="npc"] {
+    border-left-color: #9b59b6;
+}
+
+.event-log-item[data-type="achievement"] {
+    border-left-color: var(--accent-secondary);
+    background: rgba(243,156,18,0.08);
+}
+
+/* ============================================================
+   RESPONSIVE TWEAKS
+   ============================================================ */
+@media (max-width: 900px) {
+    #girls-list {
+        grid-template-columns: 1fr !important;
+    }
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+/* ============================================================
+   CITIES GRID
+   ============================================================ */
+.cities-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
