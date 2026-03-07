@@ -1,5 +1,5 @@
 // ============================================================================
-// EVENTS SYSTEM - Modular & Easy to Extend
+// EVENTS SYSTEM
 // ============================================================================
 
 // ============================================================================
@@ -27,12 +27,8 @@ function getAvailableEvents() {
 }
 
 function isEventAvailable(event) {
-    if (event.oneTime && gameState.completedEvents.includes(event.id)) {
-        return false;
-    }
-    if (gameState.eventCooldowns[event.id]) {
-        return false;
-    }
+    if (event.oneTime && gameState.completedEvents.includes(event.id)) return false;
+    if (gameState.eventCooldowns[event.id]) return false;
     return true;
 }
 
@@ -40,15 +36,9 @@ function checkEventConditions(event) {
     const c = event.conditions || {};
 
     const conditionCheckers = {
-        // ====================================================================
-        // MONEY & RESOURCES
-        // ====================================================================
         minMoney: () => gameState.money >= c.minMoney,
         maxMoney: () => gameState.money <= c.maxMoney,
 
-        // ====================================================================
-        // STATS & METRICS
-        // ====================================================================
         minReputation: () => gameState.reputation >= c.minReputation,
         maxReputation: () => gameState.reputation <= c.maxReputation,
         minRisk: () => gameState.risk >= c.minRisk,
@@ -56,43 +46,59 @@ function checkEventConditions(event) {
         minMorale: () => gameState.moraleTotal >= c.minMorale,
         maxMorale: () => gameState.moraleTotal <= c.maxMorale,
 
-        // BUG FIX: yakuza condition was entirely missing from conditionCheckers
-        // yakuza:true means requires yakuza protection; yakuza:false means requires NO protection
+        // yakuza:true = needs yakuza; yakuza:false = needs NO yakuza
         yakuza: () => gameState.yakuzaProtection === c.yakuza,
 
-        // Average stats across all girls
+        minGirls: () => gameState.girls.length >= c.minGirls,
+        maxGirls: () => gameState.girls.length <= c.maxGirls,
+        exactGirls: () => gameState.girls.length === c.exactGirls,
+
+        // City-specific events: cityId must match active city
+        cityId: () => {
+            if (typeof getActiveCity !== 'function') return true;
+            return getActiveCity() === c.cityId;
+        },
+
+        // Minimum number of unlocked schools
+        minSchools: () => {
+            return gameState.unlockedSchools && gameState.unlockedSchools.length >= c.minSchools;
+        },
+
+        // City must be unlocked
+        cityUnlocked: () => {
+            return gameState.unlockedCities && gameState.unlockedCities.includes(c.cityUnlocked);
+        },
+
+        // Achievement check for unlock conditions
+        hasAchievement: () => {
+            return gameState.earnedAchievements && gameState.earnedAchievements.includes(c.hasAchievement);
+        },
+
         minAvgLoyalty: () => {
-            if (gameState.girls.length === 0) return false;
+            if (!gameState.girls.length) return false;
             const avg = gameState.girls.reduce((sum, g) => sum + g.loyalty, 0) / gameState.girls.length;
             return avg >= c.minAvgLoyalty;
         },
         maxAvgLoyalty: () => {
-            if (gameState.girls.length === 0) return true;
+            if (!gameState.girls.length) return true;
             const avg = gameState.girls.reduce((sum, g) => sum + g.loyalty, 0) / gameState.girls.length;
             return avg <= c.maxAvgLoyalty;
         },
         minAvgLewdness: () => {
-            if (gameState.girls.length === 0) return false;
+            if (!gameState.girls.length) return false;
             const avg = gameState.girls.reduce((sum, g) => sum + g.lewdness, 0) / gameState.girls.length;
             return avg >= c.minAvgLewdness;
         },
         maxAvgLewdness: () => {
-            if (gameState.girls.length === 0) return true;
+            if (!gameState.girls.length) return true;
             const avg = gameState.girls.reduce((sum, g) => sum + g.lewdness, 0) / gameState.girls.length;
             return avg <= c.maxAvgLewdness;
         },
         minAvgGrades: () => {
-            if (gameState.girls.length === 0) return false;
+            if (!gameState.girls.length) return false;
             const avg = gameState.girls.reduce((sum, g) => sum + g.grades, 0) / gameState.girls.length;
             return avg >= c.minAvgGrades;
         },
-
-        // ====================================================================
-        // GIRLS - BASIC COUNTS
-        // ====================================================================
-        minGirls: () => gameState.girls.length >= c.minGirls,
-        maxGirls: () => gameState.girls.length <= c.maxGirls,
-        exactGirls: () => gameState.girls.length === c.exactGirls,
 
         minAvailableGirls: () => {
             const available = gameState.girls.filter(g => g.available).length;
@@ -122,18 +128,14 @@ function selectRandomEvent(availableEvents) {
 // ============================================================================
 
 function prepareEventInstance(event) {
-    if (event.targetJob) {
-        return prepareGirlTargetedEvent(event);
-    }
-    if (event.targetRandomGirl) {
-        return prepareRandomGirlEvent(event);
-    }
+    if (event.targetJob) return prepareGirlTargetedEvent(event);
+    if (event.targetRandomGirl) return prepareRandomGirlEvent(event);
     return { ...event };
 }
 
 function prepareGirlTargetedEvent(event) {
     const eligibleGirls = getEligibleGirlsForEvent(event);
-    if (eligibleGirls.length === 0) return null;
+    if (!eligibleGirls.length) return null;
     const targetGirl = eligibleGirls[Math.floor(Math.random() * eligibleGirls.length)];
     return {
         ...event,
@@ -143,11 +145,10 @@ function prepareGirlTargetedEvent(event) {
     };
 }
 
-// BUG FIX: prepareRandomGirlEvent was ignoring girlConditions entirely.
-// Now it uses getEligibleGirlsForEvent (same filtering logic) but without job requirement.
 function prepareRandomGirlEvent(event) {
+    // Apply girlConditions filter even for targetRandomGirl events
     const eligibleGirls = getEligibleGirlsForEvent(event);
-    if (eligibleGirls.length === 0) return null;
+    if (!eligibleGirls.length) return null;
     const targetGirl = eligibleGirls[Math.floor(Math.random() * eligibleGirls.length)];
     return {
         ...event,
@@ -160,32 +161,39 @@ function prepareRandomGirlEvent(event) {
 function getEligibleGirlsForEvent(event) {
     return gameState.girls.filter(girl => {
         if (!girl.available) return false;
-
-        // Job filter only for targetJob events
-        if (event.targetJob && girl.currentJob !== event.targetJob) {
-            return false;
-        }
+        if (event.targetJob && girl.currentJob !== event.targetJob) return false;
 
         const gc = event.girlConditions || {};
-        if (gc.minLoyalty !== undefined && girl.loyalty < gc.minLoyalty) return false;
-        if (gc.maxLoyalty !== undefined && girl.loyalty > gc.maxLoyalty) return false;
-        if (gc.minLewdness !== undefined && girl.lewdness < gc.minLewdness) return false;
-        if (gc.maxLewdness !== undefined && girl.lewdness > gc.maxLewdness) return false;
-        if (gc.minMorale !== undefined && girl.morale < gc.minMorale) return false;
-        if (gc.maxMorale !== undefined && girl.morale > gc.maxMorale) return false;
-        if (gc.hasTrait && !girl.traits.includes(gc.hasTrait)) return false;
-        if (gc.notHasTrait && girl.traits.includes(gc.notHasTrait)) return false;
-
+        if (gc.minLoyalty   && girl.loyalty   < gc.minLoyalty)   return false;
+        if (gc.maxLoyalty   && girl.loyalty   > gc.maxLoyalty)   return false;
+        if (gc.minLewdness  && girl.lewdness  < gc.minLewdness)  return false;
+        if (gc.maxLewdness  && girl.lewdness  > gc.maxLewdness)  return false;
+        if (gc.minMorale    && girl.morale    < gc.minMorale)    return false;
+        if (gc.maxMorale    && girl.morale    > gc.maxMorale)    return false;
+        if (gc.hasTrait     && !girl.traits.includes(gc.hasTrait))  return false;
+        if (gc.notHasTrait  && girl.traits.includes(gc.notHasTrait)) return false;
         return true;
     });
 }
 
 function replaceGirlPlaceholders(text, girl) {
-    return text
+    if (!text) return '';
+    var replaced = text
         .replace(/\{girlName\}/g, girl.name)
         .replace(/\{girlAge\}/g, girl.age)
         .replace(/\{girlPersonality\}/g, girl.personality)
         .replace(/\{girlJob\}/g, JOBS_DATA[girl.currentJob]?.name || 'Bez pracy');
+
+    // Profile-based placeholders
+    var profile = girl.profile || {};
+    if (replaced.includes('{girlDream}'))  replaced = replaced.replace(/\{girlDream\}/g,  profile.dream  || 'mieć spokój');
+    if (replaced.includes('{girlFear}'))   replaced = replaced.replace(/\{girlFear\}/g,   profile.fear   || 'stracić wszystko');
+    if (replaced.includes('{girlHobby}')) {
+        var hobbyText = profile.hobby ? girl.name + ' jest pogrążona w swoim hobby: ' + profile.hobby : girl.name + ' odpoczywa';
+        replaced = replaced.replace(/\{girlHobby\}/g, hobbyText);
+    }
+    if (replaced.includes('{girlQuote}'))  replaced = replaced.replace(/\{girlQuote\}/g,  profile.quote  || '...');
+    return replaced;
 }
 
 // ============================================================================
@@ -226,16 +234,16 @@ function createChoiceButton(event, choice) {
 
 function checkChoiceRequirements(choice) {
     const cost = choice.cost || 0;
-    if (cost > 0 && gameState.money < cost) {
-        return { available: false, reason: 'Za mało ¥' };
-    }
+    if (cost > 0 && gameState.money < cost) return { available: false, reason: 'Za mało ¥' };
+
     const req = choice.requirements || {};
-    if (req.minReputation && gameState.reputation < req.minReputation) {
+    if (req.minReputation && gameState.reputation < req.minReputation)
         return { available: false, reason: 'Za mała reputacja' };
-    }
-    if (req.minGirls && gameState.girls.length < req.minGirls) {
+    if (req.minGirls && gameState.girls.length < req.minGirls)
         return { available: false, reason: 'Za mało dziewczyn' };
-    }
+    if (req.needsYakuza && !gameState.yakuzaProtection)
+        return { available: false, reason: 'Wymaga ochrony Yakuzy' };
+
     return { available: true };
 }
 
@@ -247,17 +255,16 @@ function selectChoice(event, choice) {
     if (!checkChoiceRequirements(choice).available) return;
 
     const cost = choice.cost || 0;
-    if (cost > 0) {
-        gameState.money -= cost;
-    }
+    if (cost > 0) gameState.money -= cost;
 
     applyChoiceEffects(event, choice);
     handleEventCompletion(event);
     closeEventModal();
+
+    // Process milestones and achievements after effects
+    if (typeof checkAllGirlMilestones === 'function') checkAllGirlMilestones();
+    if (typeof checkAchievements === 'function') checkAchievements();
     
-    // BUG FIX: moraleTotal was never updated after events changed girl morale.
-    // Now we always recalculate after any choice.
-    updateAverageMorale();
     updateAll();
 }
 
@@ -266,93 +273,63 @@ function applyChoiceEffects(event, choice) {
 
     if (event.targetGirlId) {
         applyGirlEffects(event.targetGirlId, effects);
-        // BUG FIX: global effects (reputation, risk) were silently dropped for
-        // girl-targeted events because applyGlobalEffects was never called.
-        // Now we always run it regardless of targeting.
     }
-
-    // Always apply global effects (reputation, risk, yakuza, profitTax, etc.)
-    applyGlobalEffects(effects, event.targetGirlId ? null : null);
-
-    // Universal effects (money, addGirl, unlockJob, etc.)
+    // Always apply global effects (bug fix: was skipped for girl-targeted events)
+    applyGlobalEffects(effects);
     applyUniversalEffects(effects, event.targetGirlId);
-
-    // NPC relationship effects (stored on choice, not effects object)
     applyChoiceNpcEffect(choice);
-
     handleFollowUpText(event, choice);
 }
 
 function applyGirlEffects(girlId, effects) {
     const girl = gameState.girls.find(g => g.id === girlId);
-    if (!girl) {
-        console.warn("Girl not found:", girlId);
-        return;
-    }
+    if (!girl) return;
 
     const girlEffectHandlers = {
-        loyalty:    (v) => { girl.loyalty  = clamp(girl.loyalty  + v, 0, 100); },
-        morale:     (v) => { girl.morale   = clamp(girl.morale   + v, 0, 100); },
-        lewdness:   (v) => { girl.lewdness = clamp(girl.lewdness + v, 0, 100); },
-        grades:     (v) => { girl.grades   = clamp(girl.grades   + v, 0, 100); },
-        addTrait:   (trait) => { if (!girl.traits.includes(trait)) girl.traits.push(trait); },
-        removeTrait:(trait) => { girl.traits = girl.traits.filter(t => t !== trait); },
-        skillBoost: (skillData) => {
-            for (let skill in skillData) {
-                if (girl.skills[skill] !== undefined) {
-                    girl.skills[skill] = clamp(girl.skills[skill] + skillData[skill], 0, 100);
-                }
+        loyalty:     (v) => { girl.loyalty  = clamp(girl.loyalty  + v, 0, 100); },
+        morale:      (v) => { girl.morale   = clamp(girl.morale   + v, 0, 100); },
+        lewdness:    (v) => { girl.lewdness = clamp(girl.lewdness + v, 0, 100); },
+        grades:      (v) => { girl.grades   = clamp(girl.grades   + v, 0, 100); },
+        addTrait:    (t) => { if (!girl.traits.includes(t)) girl.traits.push(t); },
+        removeTrait: (t) => { girl.traits = girl.traits.filter(x => x !== t); },
+        skillBoost:  (sd) => {
+            for (let sk in sd) {
+                if (girl.skills[sk] !== undefined)
+                    girl.skills[sk] = clamp(girl.skills[sk] + sd[sk], 0, 100);
             }
         }
     };
 
     for (let effect in effects) {
-        if (girlEffectHandlers[effect]) {
-            girlEffectHandlers[effect](effects[effect]);
-        }
+        if (girlEffectHandlers[effect]) girlEffectHandlers[effect](effects[effect]);
     }
 
-    if (effects.money || effects.loyalty || effects.morale) {
-        logEvent(`💝 ${girl.name} – event completed`, 'date');
-    }
+    // Update morale total after girl effects
+    if (typeof updateAverageMorale === 'function') updateAverageMorale();
+
+    logEvent(`💝 ${girl.name} – zdarzenie`, 'date');
 }
 
-// BUG FIX: applyGlobalEffects previously only applied morale/loyalty/lewdness to ALL girls.
-// For girl-targeted events we want those to apply only to the target (done in applyGirlEffects),
-// but reputation, risk, yakuza etc. should still fire.  The girlOnlyKeys set prevents
-// double-applying per-girl stats when a targeted event also has global-looking keys.
 function applyGlobalEffects(effects) {
-    // These keys are handled per-girl in applyGirlEffects for targeted events;
-    // for non-targeted events they broadcast to all girls.
     const globalEffectHandlers = {
-        morale: (v) => {
-            gameState.girls.forEach(g => { g.morale = clamp(g.morale + v, 0, 100); });
-        },
-        loyalty: (v) => {
-            gameState.girls.forEach(g => { g.loyalty = clamp(g.loyalty + v, 0, 100); });
-        },
-        lewdness: (v) => {
-            gameState.girls.forEach(g => { g.lewdness = clamp(g.lewdness + v, 0, 100); });
-        },
-        reputation:      (v) => { gameState.reputation = clamp(gameState.reputation + v, 0, 100); },
-        risk:            (v) => { gameState.risk        = clamp(gameState.risk        + v, 0, 100); },
-        yakuzaProtection:(v) => { gameState.yakuzaProtection = v; },
-        profitTax:       (v) => { gameState.profitTax = v; }
+        morale:     (v) => { gameState.girls.forEach(g => { g.morale  = clamp(g.morale  + v, 0, 100); }); },
+        loyalty:    (v) => { gameState.girls.forEach(g => { g.loyalty = clamp(g.loyalty + v, 0, 100); }); },
+        lewdness:   (v) => { gameState.girls.forEach(g => { g.lewdness = clamp(g.lewdness + v, 0, 100); }); },
+        reputation: (v) => { gameState.reputation = clamp(gameState.reputation + v, 0, 100); },
+        risk:       (v) => { gameState.risk       = clamp(gameState.risk       + v, 0, 100); },
+        yakuzaProtection: (v) => { gameState.yakuzaProtection = v; },
+        profitTax:  (v) => { gameState.profitTax = v; }
     };
 
     for (let effect in effects) {
-        if (globalEffectHandlers[effect]) {
-            globalEffectHandlers[effect](effects[effect]);
-        }
+        if (globalEffectHandlers[effect]) globalEffectHandlers[effect](effects[effect]);
     }
+
+    if (typeof updateAverageMorale === 'function') updateAverageMorale();
 }
 
-// BUG FIX: applyUniversalEffects now receives targetGirlId so that removeGirl
-// removes the correct targeted girl instead of a random one.
 function applyUniversalEffects(effects, targetGirlId) {
-    if (effects.money) {
-        gameState.money += effects.money;
-    }
+    if (effects.money) gameState.money += effects.money;
 
     if (effects.unlockJob && !gameState.unlockedJobs.includes(effects.unlockJob)) {
         gameState.unlockedJobs.push(effects.unlockJob);
@@ -360,24 +337,33 @@ function applyUniversalEffects(effects, targetGirlId) {
         logEvent(`🔓 ${jobName} odblokowane`, 'unlock');
     }
 
+    // City unlock (from city events)
+    if (effects.unlockCity && typeof unlockCity === 'function') {
+        unlockCity(effects.unlockCity);
+    }
+
     if (effects.addGirl) {
         const newGirl = generateRandomGirl();
         gameState.girls.push(newGirl);
-        logEvent(`✨ ${newGirl.name} dołączyła do szkoły!`, 'recruit');
+        // Add to active school
+        if (typeof getSchool === 'function') {
+            getSchool(gameState.activeSchoolId).girlIds.push(newGirl.id);
+        }
+        logEvent(`✨ ${newGirl.name} dołączyła do ${SCHOOL_TEMPLATES[gameState.activeSchoolId]?.name || 'szkoły'}!`, 'recruit');
     }
 
     if (effects.addGirls) {
         for (let i = 0; i < effects.addGirls; i++) {
             const newGirl = generateRandomGirl();
             gameState.girls.push(newGirl);
+            if (typeof getSchool === 'function') {
+                getSchool(gameState.activeSchoolId).girlIds.push(newGirl.id);
+            }
         }
         logEvent(`✨ ${effects.addGirls} nowych dziewczyn dołączyło!`, 'recruit');
     }
 
     if (effects.removeGirl) {
-        // BUG FIX: Previously always removed a *random* girl even when the event
-        // had a specific target (e.g. girl_wants_to_leave). Now we remove the
-        // targeted girl when one is set, falling back to random otherwise.
         let girlIndex;
         if (targetGirlId !== undefined && targetGirlId !== null) {
             girlIndex = gameState.girls.findIndex(g => g.id === targetGirlId);
@@ -387,6 +373,12 @@ function applyUniversalEffects(effects, targetGirlId) {
         }
         if (gameState.girls.length > 0) {
             const removedGirl = gameState.girls.splice(girlIndex, 1)[0];
+            // Remove from all school records
+            Object.keys(gameState.schools || {}).forEach(sid => {
+                if (gameState.schools[sid].girlIds) {
+                    gameState.schools[sid].girlIds = gameState.schools[sid].girlIds.filter(id => id !== removedGirl.id);
+                }
+            });
             logEvent(`⚠️ ${removedGirl.name} odeszła`, 'event');
         }
     }
@@ -396,49 +388,38 @@ function applyUniversalEffects(effects, targetGirlId) {
     }
 }
 
-// npcEffect is stored on the choice itself (not in effects), handled here
+// npcEffect from city events uses { id, delta } format; from expansion events uses { npc, value }
 function applyChoiceNpcEffect(choice) {
-    if (choice.npcEffect && typeof applyNpcEffect === 'function') {
-        applyNpcEffect(choice.npcEffect);
+    if (!choice.npcEffect || typeof applyNpcEffect !== 'function') return;
+    const ne = choice.npcEffect;
+    // Normalize to the format applyNpcEffect in index.html expects: { npc, value }
+    if (ne.id !== undefined && ne.delta !== undefined) {
+        applyNpcEffect({ npc: ne.id, value: ne.delta });
+    } else if (ne.npc !== undefined && ne.value !== undefined) {
+        applyNpcEffect(ne);
     }
 }
 
 function handleEventCompletion(event) {
-    // Track for weekly report
-    if (typeof gameState !== 'undefined' && gameState.weeklyStats) {
-        gameState.weeklyStats.events++;
-    }
-    if (event.cooldown) {
-        gameState.eventCooldowns[event.id] = event.cooldown;
-    }
-    if (event.oneTime) {
-        if (!gameState.completedEvents.includes(event.id)) {
-            gameState.completedEvents.push(event.id);
-        }
+    if (gameState.weeklyStats) gameState.weeklyStats.events++;
+    if (event.cooldown) gameState.eventCooldowns[event.id] = event.cooldown;
+    if (event.oneTime && !gameState.completedEvents.includes(event.id)) {
+        gameState.completedEvents.push(event.id);
     }
 }
 
 function handleFollowUpText(event, choice) {
     if (!choice.followUpText) return;
-
     let text = choice.followUpText;
     if (event.targetGirlId) {
         const girl = gameState.girls.find(g => g.id === event.targetGirlId);
-        if (girl) {
-            text = replaceGirlPlaceholders(text, girl);
-            logEvent(`📅 ${girl.name} – ${text}`, 'date');
-        } else {
-            // Girl may have just been removed (removeGirl effect)
-            text = text.replace(/\{girlName\}/g, event.targetGirlName || '???');
-            logEvent(`📅 ${text}`, 'event');
-        }
+        const name = girl ? girl.name : (event.targetGirlName || '?');
+        text = text.replace(/\{girlName\}/g, name);
+        logEvent(`📅 ${name} – ${text}`, 'date');
     } else {
         logEvent(`📰 ${event.title} – ${text}`, 'event');
     }
-
-    if (choice.showAlert) {
-        alert(text);
-    }
+    if (choice.showAlert) alert(text);
 }
 
 function closeEventModal() {
@@ -448,7 +429,7 @@ function closeEventModal() {
 }
 
 // ============================================================================
-// UTILITY FUNCTIONS
+// UTILITY
 // ============================================================================
 
 function clamp(value, min, max) {
@@ -456,63 +437,73 @@ function clamp(value, min, max) {
 }
 
 // ============================================================================
-// GIRL GENERATION
+// GIRL GENERATION — with profile data
 // ============================================================================
 
 function generateRandomGirl() {
     const personality = PERSONALITIES[Math.floor(Math.random() * PERSONALITIES.length)];
-
     const first = FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
     const last  = LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)];
+    const age   = 15 + Math.floor(Math.random() * 4);  // 15–18
 
-    // BUG FIX: range was 16–19, should be 15–18 for a high-school setting
-    const age = 15 + Math.floor(Math.random() * 4);
+    function rng(range) { return range[0] + Math.floor(Math.random() * (range[1] - range[0] + 1)); }
 
-    const loyalty    = 35 + Math.floor(Math.random() * 35);
-    const lewdness   = personality.lewdness[0]   + Math.floor(Math.random() * (personality.lewdness[1]   - personality.lewdness[0]   + 1));
-    const grades     = personality.grades[0]     + Math.floor(Math.random() * (personality.grades[1]     - personality.grades[0]     + 1));
-    const morale     = personality.morale[0]     + Math.floor(Math.random() * (personality.morale[1]     - personality.morale[0]     + 1));
-    const conversation = personality.conversation[0] + Math.floor(Math.random() * (personality.conversation[1] - personality.conversation[0] + 1));
+    const loyalty     = 35 + Math.floor(Math.random() * 35);
+    const lewdness    = rng(personality.lewdness);
+    const grades      = rng(personality.grades);
+    const morale      = rng(personality.morale);
+    const conversation = rng(personality.conversation);
 
-    const handjob = Math.max(0, Math.floor(lewdness * 0.6) + Math.floor(Math.random() * 15) - 10);
-    const blowjob = Math.max(0, Math.floor(lewdness * 0.4) + Math.floor(Math.random() * 12) - 8);
-    const vaginal = Math.max(0, Math.floor(lewdness * 0.3) - 5 + Math.floor(Math.random() * 10));
-    const anal    = Math.max(0, Math.floor(lewdness * 0.15) - 10 + Math.floor(Math.random() * 8));
-    const feet    = Math.max(0, Math.floor(lewdness * 0.5) + Math.floor(Math.random() * 18) - 12);
+    const handjob  = Math.max(0, Math.floor(lewdness * 0.6)  + Math.floor(Math.random() * 15) - 10);
+    const blowjob  = Math.max(0, Math.floor(lewdness * 0.4)  + Math.floor(Math.random() * 12) -  8);
+    const vaginal  = Math.max(0, Math.floor(lewdness * 0.3)  - 5 + Math.floor(Math.random() * 10));
+    const anal     = Math.max(0, Math.floor(lewdness * 0.15) - 10 + Math.floor(Math.random() * 8));
+    const feet     = Math.max(0, Math.floor(lewdness * 0.5)  + Math.floor(Math.random() * 18) - 12);
 
     const traits = [...personality.traits];
-    if (lewdness < 15) traits.push("virgin");
-    if (morale < 50)   traits.push("insecure");
-    if (grades > 90)   traits.push("smart");
+    if (lewdness < 15) traits.push('virgin');
+    if (morale < 50)   traits.push('insecure');
+    if (grades > 90)   traits.push('smart');
 
-    // BUG FIX: BACKSTORIES was defined in girls.js but completely ignored here.
-    // Now we use it when a matching personality key exists, with a graceful fallback.
-    const backstoryList = BACKSTORIES[personality.name];
-    const backstory = backstoryList
-        ? backstoryList[Math.floor(Math.random() * backstoryList.length)]
-        : ["Pochodzi z biednej rodziny.", "Ma problemy finansowe w domu.", "Nowa w Seiran Academy.", "Chce pomóc rodzinie."][Math.floor(Math.random() * 4)];
+    // Use personality-matched backstories
+    const bsPool = BACKSTORIES[personality.name] || [
+        'Nowa w szkole, szuka swojego miejsca.',
+        'Pochodzi z trudnej rodziny. Potrzebuje wsparcia.',
+        'Marzy o lepszym życiu dla siebie i bliskich.'
+    ];
+    const backstory = bsPool[Math.floor(Math.random() * bsPool.length)];
+
+    // Generate rich individual profile
+    const profile = typeof generateGirlProfile === 'function'
+        ? generateGirlProfile(personality, first + ' ' + last)
+        : null;
+
+    const id = gameState.nextGirlId++;
 
     return {
-        id:          gameState.nextGirlId++,
-        name:        `${first} ${last}`,
-        age:         age,
+        id,
+        name: `${first} ${last}`,
+        age,
         personality: personality.name,
-        backstory:   backstory,
-        loyalty:     Math.min(95, loyalty),
-        lewdness:    Math.min(60, lewdness),
-        grades:      Math.min(100, grades),
-        morale:      Math.min(100, morale),
+        backstory,
+        profile,
+        achievedMilestones: [],
+        incomeBonus: 0,
+        loyalty:  Math.min(95, loyalty),
+        lewdness: Math.min(60, lewdness),
+        grades:   Math.min(100, grades),
+        morale:   Math.min(100, morale),
         skills: {
             conversation: Math.min(80, conversation),
-            handjob:      Math.min(60, handjob),
-            blowjob:      Math.min(50, blowjob),
-            vaginal:      Math.min(40, vaginal),
-            anal:         Math.min(25, anal),
-            feet:         Math.min(55, feet)
+            handjob:  Math.min(60, handjob),
+            blowjob:  Math.min(50, blowjob),
+            vaginal:  Math.min(40, vaginal),
+            anal:     Math.min(25, anal),
+            feet:     Math.min(55, feet)
         },
         currentJob: 'none',
-        traits:     traits,
-        available:  true
+        traits,
+        available: true
     };
 }
 
@@ -523,7 +514,7 @@ function generateRandomGirl() {
 function logEvent(msg, type) {
     const ts = `${gameState.time.day}/${gameState.time.month} ${String(gameState.time.hour).padStart(2,'0')}:00`;
     gameState.eventLog.unshift({ ts, msg, type });
-    if (gameState.eventLog.length > 50) gameState.eventLog = gameState.eventLog.slice(0, 50);
+    if (gameState.eventLog.length > 80) gameState.eventLog = gameState.eventLog.slice(0, 80);
 }
 
 function renderEventLog() {
@@ -532,13 +523,13 @@ function renderEventLog() {
         container.innerHTML = '<p>Brak wydarzeń</p>';
         return;
     }
-
+    const icons = {
+        income:'💰', job:'💼', training:'📚', comfort:'❤️', event:'📰',
+        unlock:'🔓', recruit:'✨', debt:'💳', date:'💝', npc:'🎭',
+        achievement:'🏆', bond:'💗', school:'🏫', transfer:'✈️', expense:'💸'
+    };
     let html = '<div class="event-log-container">';
     gameState.eventLog.forEach(log => {
-        const icons = {
-            income:'💰', job:'💼', training:'📚', comfort:'❤️',
-            event:'📰', unlock:'🔓', recruit:'✨', debt:'💳', date:'💝', school:'🏫'
-        };
         html += `<div class="event-log-item">
             <span class="event-time">[${log.ts}]</span>
             <span>${icons[log.type] || '📋'} ${log.msg}</span>
