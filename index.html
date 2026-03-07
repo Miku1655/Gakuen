@@ -5,182 +5,220 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gakuen Empire Idle</title>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/expansion.css">
 </head>
 <body>
-    <div id="left-menu">
-        <div class="menu-header">
-            <h1>Gakuen Empire</h1>
-        </div>
-        
-        <div class="menu-section time-display">
-            <div class="stat-row">
-                <span class="label">Godzina:</span>
-                <span id="current-hour">08:00</span>
-            </div>
-            <div class="stat-row">
-                <span class="label">Dzień:</span>
-                <span id="current-day">Poniedziałek</span>
-            </div>
-            <div class="stat-row">
-                <span class="label">Data:</span>
-                <span id="current-date">1 Kwietnia 2025</span>
-            </div>
-        </div>
+<div id="toast-container"></div>
 
-        <div class="menu-section stats-display">
-            <div class="stat-row">
-                <span class="label">Gotówka:</span>
-                <span id="money">¥800,000</span>
-            </div>
-            <div class="stat-row">
-                <span class="label">Dług:</span>
-                <span id="debt">¥5,000,000</span>
-            </div>
-            <div class="stat-row">
-                <span class="label">Reputacja:</span>
-                <span id="reputation">45</span>
-            </div>
-            <div class="stat-row">
-                <span class="label">Średnia ocen:</span>
-                <span id="grades">0.0</span>
-            </div>
-            <div class="stat-row">
-                <span class="label">Morale:</span>
-                <span id="morale">65%</span>
-            </div>
-        </div>
+<div id="weekly-modal" class="modal">
+    <div class="modal-content" style="max-width:700px;">
+        <h3 id="weekly-title">📊 Tygodniowy Raport</h3>
+        <div id="weekly-body"></div>
+        <button onclick="closeWeeklyReport()" class="action-btn" style="margin-top:20px;">Kontynuuj</button>
+    </div>
+</div>
 
-        <div class="menu-section navigation">
-            <button class="nav-btn active" data-page="dashboard">📊 Dashboard</button>
-            <button class="nav-btn" data-page="girls">👥 Dziewczyny</button>
-            <button class="nav-btn" data-page="school">🏫 Szkoła</button>
-            <button class="nav-btn" data-page="business">💼 Biznes</button>
-            <button class="nav-btn" data-page="city">🌆 Miasto</button>
-            <button class="nav-btn" data-page="events">📰 Wydarzenia</button>
-            <button class="nav-btn" data-page="options">⚙️ Opcje</button>
-        </div>
+<div id="achievement-modal" class="modal">
+    <div class="modal-content" style="max-width:500px;text-align:center;">
+        <div style="font-size:4em;" id="ach-icon">🏆</div>
+        <h3 id="ach-title" style="font-size:2em;margin:10px 0;">Osiągnięcie!</h3>
+        <p id="ach-desc" style="color:var(--text-secondary);"></p>
+        <button onclick="closeAchievementModal()" class="action-btn" style="margin-top:20px;">Odbiór</button>
+    </div>
+</div>
 
-        <div class="menu-section time-controls">
-            <div style="display: flex; flex-wrap: wrap;">
-                <button id="pause-btn" class="time-btn" style="flex: 1 1 100%;">▶ Start</button>
-                <button id="speed-1x" class="time-btn active">1x</button>
-                <button id="speed-10x" class="time-btn">10x</button>
-                <button id="speed-30x" class="time-btn">30x</button>
-                <button id="speed-100x" class="time-btn">100x</button>
-            </div>
+<div id="left-menu">
+    <div class="menu-header">
+        <h1>Gakuen Empire</h1>
+        <div style="font-size:0.75em;opacity:0.8;margin-top:4px;">Seiran Academy</div>
+    </div>
+    <div class="menu-section time-display">
+        <div class="stat-row"><span class="label">Godzina:</span><span id="current-hour">08:00</span></div>
+        <div class="stat-row"><span class="label">Dzień:</span><span id="current-day">Pon</span></div>
+        <div class="stat-row"><span class="label">Data:</span><span id="current-date">1 Kwi 2025</span></div>
+    </div>
+    <div class="menu-section stats-display">
+        <div class="stat-row"><span class="label">Gotówka:</span><span id="money" style="color:var(--accent-secondary)">¥800,000</span></div>
+        <div class="stat-row"><span class="label">Dług:</span><span id="debt" style="color:var(--danger)">¥5,000,000</span></div>
+        <div class="stat-row">
+            <span class="label">Reputacja:</span>
+            <span><span id="reputation">45</span> <span id="rep-label" style="font-size:0.75em;"></span></span>
         </div>
-
-        <div class="menu-section save-controls">
-            <button id="save-btn" class="action-btn">💾 Zapisz</button>
-            <button id="load-btn" class="action-btn">📂 Wczytaj</button>
+        <div class="stat-row"><span class="label">Śr. ocen:</span><span id="grades">0.0</span></div>
+        <div class="stat-row"><span class="label">Morale:</span><span id="morale">65%</span></div>
+        <div class="stat-row"><span class="label">Ryzyko:</span><span id="risk">15%</span></div>
+    </div>
+    <div class="menu-section navigation">
+        <button class="nav-btn active" data-page="dashboard">📊 Dashboard</button>
+        <button class="nav-btn" data-page="girls">👥 Dziewczyny</button>
+        <button class="nav-btn" data-page="npcs">🎭 Kontakty</button>
+        <button class="nav-btn" data-page="school">🏫 Szkoła</button>
+        <button class="nav-btn" data-page="business">💼 Biznes</button>
+        <button class="nav-btn" data-page="achievements">🏆 Osiągnięcia</button>
+        <button class="nav-btn" data-page="events">📰 Dziennik</button>
+        <button class="nav-btn" data-page="options">⚙️ Opcje</button>
+    </div>
+    <div class="menu-section time-controls">
+        <div style="display:flex;flex-wrap:wrap;">
+            <button id="pause-btn" class="time-btn" style="flex:1 1 100%;">▶ Start</button>
+            <button id="speed-1x"   class="time-btn active">1x</button>
+            <button id="speed-10x"  class="time-btn">10x</button>
+            <button id="speed-30x"  class="time-btn">30x</button>
+            <button id="speed-100x" class="time-btn">100x</button>
         </div>
     </div>
+    <div class="menu-section save-controls">
+        <button id="save-btn" class="action-btn">💾 Zapisz</button>
+        <button id="load-btn" class="action-btn">📂 Wczytaj</button>
+    </div>
+</div>
 
-    <div id="main-content">
-        <div id="page-dashboard" class="page active">
-            <h2>Dashboard - Seiran Academy</h2>
-            <div class="dashboard-grid">
-                <div class="dashboard-card">
-                    <h3>📋 Status Szkoły</h3>
-                    <p>Witaj, Dyrektorze. Twoja szkoła boryka się z ogromnym długiem w wysokości ¥5,000,000.</p>
-                    <p><strong>Dług rośnie:</strong> ~0.08% dziennie (~30% rocznie)</p>
-                    <button onclick="payDebt(100000)" class="action-btn" style="margin-top: 15px;">Spłać ¥100,000 długu</button>
-                    <button onclick="payDebt(500000)" class="action-btn">Spłać ¥500,000 długu</button>
-                    <button onclick="payDebt(gameState.money)" class="action-btn">Spłać wszystko</button>
-                </div>
-                <div class="dashboard-card">
-                    <h3>💰 Dzienny Przychód</h3>
-                    <p style="font-size: 2em; font-weight: bold; color: var(--accent-secondary);" id="daily-income">¥0</p>
-                    <p id="income-breakdown"></p>
-                </div>
-                <div class="dashboard-card">
-                    <h3>👥 Aktywne Dziewczyny</h3>
-                    <p style="font-size: 2em; font-weight: bold; color: var(--accent-primary);" id="active-girls">0/0</p>
-                </div>
-                <div class="dashboard-card">
-                    <h3>📈 Wskazówki</h3>
-                    <p>✓ Przypisz dziewczyny do Randek Szkolnych</p>
-                    <p>✓ Trenuj lewdness (¥15k każdy trening)</p>
-                    <p>✓ Czekaj na wydarzenia (losowe co kilka godzin)</p>
-                    <p>✓ Dbaj o morale - pocieszaj gdy < 50%</p>
-                </div>
+<div id="main-content">
+
+    <div id="page-dashboard" class="page active">
+        <h2>Dashboard – Seiran Academy</h2>
+        <div class="dashboard-grid">
+            <div class="dashboard-card">
+                <h3>📋 Status Finansowy</h3>
+                <p id="dash-lore-text" style="font-style:italic;color:var(--text-secondary);margin-bottom:12px;font-size:0.9em;"></p>
+                <p style="font-size:0.9em;">Dług rośnie ~0.08% dziennie (~30% rocznie)</p>
+                <p id="debt-payoff-estimate" style="font-size:0.9em;margin:8px 0;"></p>
+                <button onclick="payDebt(100000)" class="action-btn" style="margin-top:10px;">Spłać ¥100,000</button>
+                <button onclick="payDebt(500000)" class="action-btn">Spłać ¥500,000</button>
+                <button onclick="payDebt(gameState.money)" class="action-btn">Spłać wszystko</button>
             </div>
-        </div>
-
-        <div id="page-girls" class="page">
-            <h2>👥 Zarządzanie Dziewczynami</h2>
-            <div id="girls-list"></div>
-        </div>
-
-        <div id="page-school" class="page">
-            <h2>🏫 Zarządzanie Szkołą</h2>
-            <div id="school-investments"></div>
-        </div>
-
-        <div id="page-business" class="page">
-            <h2>💼 Operacje Biznesowe</h2>
-            <div id="business-operations"></div>
-        </div>
-
-        <div id="page-city" class="page">
-            <h2>🌆 Miasta i Lokacje</h2>
-            <div id="city-locations"></div>
-        </div>
-
-        <div id="page-events" class="page">
-            <h2>📰 Historia Wydarzeń</h2>
-            <div id="events-log"></div>
-        </div>
-
-        <div id="page-options" class="page">
-            <h2>⚙️ Opcje</h2>
-            <div style="max-width: 600px;">
-                <h3>Zarządzanie Zapisem</h3>
-                <p>Gra auto-zapisuje co 7 dni.</p>
-                <h3 style="margin-top: 30px; color: var(--danger);">Reset</h3>
-                <button id="reset-game" class="action-btn" style="background: var(--danger);">🔄 Resetuj Grę</button>
+            <div class="dashboard-card">
+                <h3>💰 Dzienny Przychód</h3>
+                <p style="font-size:2.2em;font-weight:bold;color:var(--accent-secondary);" id="daily-income">¥0</p>
+                <p id="income-after-tax" style="color:var(--text-secondary);font-size:0.9em;margin:4px 0;"></p>
+                <p id="income-projection" style="color:var(--success);font-size:0.85em;"></p>
+                <hr style="margin:10px 0;border-color:rgba(255,255,255,0.1);">
+                <div id="income-breakdown" style="font-size:0.9em;"></div>
+            </div>
+            <div class="dashboard-card">
+                <h3>👥 Zespół</h3>
+                <p style="font-size:2.2em;font-weight:bold;color:var(--accent-primary);" id="active-girls">0/0</p>
+                <p id="team-morale-status" style="margin-top:8px;font-size:0.9em;"></p>
+                <p id="team-risk-status"  style="font-size:0.9em;"></p>
+            </div>
+            <div class="dashboard-card">
+                <h3>🎭 Kluczowe Kontakty</h3>
+                <div id="npc-summary"></div>
             </div>
         </div>
     </div>
 
-    <div id="event-modal" class="modal">
-        <div class="modal-content">
-            <h3 id="event-title"></h3>
-            <p id="event-description"></p>
-            <div id="event-choices"></div>
+    <div id="page-girls" class="page">
+        <h2>👥 Zarządzanie Dziewczynami</h2>
+        <div id="girls-list"></div>
+    </div>
+
+    <div id="page-npcs" class="page">
+        <h2>🎭 Kontakty i Relacje</h2>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Kluczowe osoby, których stosunek do ciebie ma realne skutki w grze.</p>
+        <div id="npcs-list"></div>
+    </div>
+
+    <div id="page-school" class="page">
+        <h2>🏫 Zarządzanie Szkołą</h2>
+        <div id="school-investments"></div>
+    </div>
+
+    <div id="page-business" class="page">
+        <h2>💼 Operacje Biznesowe</h2>
+        <div id="business-operations"></div>
+    </div>
+
+    <div id="page-achievements" class="page">
+        <h2>🏆 Osiągnięcia</h2>
+        <p id="ach-progress" style="color:var(--text-secondary);margin-bottom:20px;"></p>
+        <div id="achievements-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:15px;"></div>
+    </div>
+
+    <div id="page-events" class="page">
+        <h2>📰 Dziennik Wydarzeń</h2>
+        <div id="events-log"></div>
+    </div>
+
+    <div id="page-options" class="page">
+        <h2>⚙️ Opcje</h2>
+        <div style="max-width:600px;">
+            <h3>Zarządzanie Zapisem</h3>
+            <p>Gra auto-zapisuje co 7 dni gry.</p>
+            <h3 style="margin-top:30px;color:var(--danger);">Resetowanie</h3>
+            <button id="reset-game" class="action-btn" style="background:var(--danger);">🔄 Resetuj Grę</button>
         </div>
     </div>
-    <script src="data/gamedata.js"></script>
-    <script src="data/girls.js"></script>
-    <script>
+</div>
 
-// ============================================================================
-// GAME STATE
-// ============================================================================
+<div id="event-modal" class="modal">
+    <div class="modal-content">
+        <h3 id="event-title"></h3>
+        <p id="event-description"></p>
+        <div id="event-choices"></div>
+    </div>
+</div>
+
+<div id="training-modal" class="modal">
+    <div class="modal-content">
+        <h3 id="training-girl-name">Wybierz Trening</h3>
+        <p style="color:var(--text-secondary);margin-bottom:15px;">Wybierz rodzaj treningu.</p>
+        <div id="training-options"></div>
+        <button onclick="closeTrainingModal()" class="action-btn" style="margin-top:15px;background:rgba(255,255,255,0.1);">Anuluj</button>
+    </div>
+</div>
+
+<script src="data/gamedata.js"></script>
+<script src="data/girls.js"></script>
+<script src="data/expansion.js"></script>
+<script src="js/events.js"></script>
+<script src="js/cbs.js"></script>
+<script src="js/save.js"></script>
+<script>
 
 let gameState = {
     time: { hour: 8, dayOfWeek: 1, day: 1, month: 4, year: 2025 },
     money: 800000, debt: 5000000, reputation: 45, moraleTotal: 65,
     girls: [], gameSpeed: 1, isPaused: true,
     yakuzaProtection: false, profitTax: 0, risk: 15,
-    unlockedJobs: ['none', 'school_dates'],
+    unlockedJobs: ['none', 'school_dates', 'tutor'],
     completedEvents: [], eventLog: [], eventCooldowns: {},
-    purchasedInvestments: [], nextGirlId: 4, lastEventCheck: 0
+    purchasedInvestments: [], nextGirlId: 4, lastEventCheck: 0,
+    comfortCooldowns: {},
+    npcRelationships: {},
+    earnedAchievements: [],
+    weeklyStats: { income: 0, events: 0, trained: 0 },
+    totalDays: 0
 };
 
 const TIME_PER_TICK_MS = 3000;
 let gameLoopInterval;
+let achievementQueue = [];
 
 // ============================================================================
 // INIT
 // ============================================================================
-
 function initGame() {
-    gameState.girls = [generateRandomGirl()];
+    // Merge expansion data into base arrays/objects
+    Object.assign(JOBS_DATA, JOBS_DATA_EXPANSION);
+    EVENTS_DATA.push(...EVENTS_DATA_EXPANSION);
+    SCHOOL_INVESTMENTS.push(...SCHOOL_INVESTMENTS_EXPANSION);
+    Object.keys(BACKSTORIES_EXPANSION).forEach(k => {
+        BACKSTORIES[k] = [...(BACKSTORIES[k] || []), ...BACKSTORIES_EXPANSION[k]];
+    });
+
+    // Init NPC relationships from NPC_DATA defaults
+    Object.keys(NPC_DATA).forEach(id => {
+        if (gameState.npcRelationships[id] === undefined)
+            gameState.npcRelationships[id] = NPC_DATA[id].initialRelationship;
+    });
+
+    gameState.girls = [generateRandomGirl(), generateRandomGirl()];
+    updateAverageMorale();
     updateAll();
     setupUI();
     startGameLoop();
-    console.log("✅ Game ready!");
+    console.log("✅ Gakuen Empire – Expanded Edition ready!");
 }
 
 function setupUI() {
@@ -188,34 +226,32 @@ function setupUI() {
         btn.onclick = () => {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`page-${btn.dataset.page}`).classList.add('active');
+            document.getElementById('page-' + btn.dataset.page).classList.add('active');
             btn.classList.add('active');
-            if (btn.dataset.page === 'girls') renderGirls();
-            if (btn.dataset.page === 'events') renderEventLog();
-            if (btn.dataset.page === 'school') renderSchool();
-            if (btn.dataset.page === 'business') renderBusiness();
-            if (btn.dataset.page === 'city') renderCities();
+            if (btn.dataset.page === 'girls')        { renderGirls(); lastGirlsRender = Date.now(); }
+            if (btn.dataset.page === 'events')       renderEventLog();
+            if (btn.dataset.page === 'school')       renderSchool();
+            if (btn.dataset.page === 'business')     renderBusiness();
+            if (btn.dataset.page === 'npcs')         renderNPCs();
+            if (btn.dataset.page === 'achievements') renderAchievements();
         };
     });
-
     document.getElementById('pause-btn').onclick = () => {
         gameState.isPaused = !gameState.isPaused;
         document.getElementById('pause-btn').textContent = gameState.isPaused ? '▶ Start' : '⏸ Pauza';
     };
-
     ['1','10','30','100'].forEach(s => {
-        document.getElementById(`speed-${s}x`).onclick = () => {
+        document.getElementById('speed-' + s + 'x').onclick = () => {
             gameState.gameSpeed = parseInt(s);
             document.querySelectorAll('.time-btn:not(#pause-btn)').forEach(b => b.classList.remove('active'));
-            document.getElementById(`speed-${s}x`).classList.add('active');
+            document.getElementById('speed-' + s + 'x').classList.add('active');
             startGameLoop();
         };
     });
-
-    document.getElementById('save-btn').onclick = () => saveGame();
-    document.getElementById('load-btn').onclick = () => loadGame();
+    document.getElementById('save-btn').onclick   = () => saveGame();
+    document.getElementById('load-btn').onclick   = () => loadGame();
     document.getElementById('reset-game').onclick = () => {
-        if (confirm('Resetować grę?')) {
+        if (confirm('Resetować grę? Wszystkie postępy zostaną utracone.')) {
             localStorage.removeItem('gakuen_save');
             location.reload();
         }
@@ -225,7 +261,6 @@ function setupUI() {
 // ============================================================================
 // GAME LOOP
 // ============================================================================
-
 function startGameLoop() {
     if (gameLoopInterval) clearInterval(gameLoopInterval);
     gameLoopInterval = setInterval(() => {
@@ -241,270 +276,522 @@ function tick() {
         gameState.time.hour = 0;
         gameState.time.dayOfWeek = (gameState.time.dayOfWeek % 7) + 1;
         gameState.time.day++;
+        gameState.totalDays++;
         dailyCycle();
-
         if (gameState.time.day > 30) {
             gameState.time.day = 1;
             gameState.time.month++;
-            if (gameState.time.month > 12) {
-                gameState.time.month = 1;
-                gameState.time.year++;
-            }
+            if (gameState.time.month > 12) { gameState.time.month = 1; gameState.time.year++; }
         }
+    }
+
+    for (let id in gameState.eventCooldowns) {
+        if (--gameState.eventCooldowns[id] <= 0) delete gameState.eventCooldowns[id];
+    }
+    for (let id in gameState.comfortCooldowns) {
+        if (--gameState.comfortCooldowns[id] <= 0) delete gameState.comfortCooldowns[id];
     }
 
     updateAll();
 
-    // Cooldown event timers
-    for (let id in gameState.eventCooldowns) {
-        gameState.eventCooldowns[id]--;
-        if (gameState.eventCooldowns[id] <= 0) delete gameState.eventCooldowns[id];
-    }
-
-    // Try trigger event every 3+ hours
     if (gameState.lastEventCheck >= 3 && Math.random() < 0.15) {
         triggerRandomEvent();
         gameState.lastEventCheck = 0;
+    }
+
+    if (gameState.time.hour % 6 === 0) checkAchievements();
+
+    if (achievementQueue.length > 0 && !document.getElementById('achievement-modal').classList.contains('active')) {
+        showNextAchievement();
     }
 }
 
 function dailyCycle() {
     let income = 0;
-
     gameState.girls.forEach(g => {
         if (g.currentJob && g.currentJob !== 'none') {
             income += calculateIncome(g, g.currentJob);
             const job = JOBS_DATA[g.currentJob];
             if (job.risk > 30) g.morale = Math.max(10, g.morale - Math.floor(job.risk / 20));
+            if (job.coverJob) gameState.risk = Math.max(0, gameState.risk - 1);
             if (g.morale < 30) g.loyalty = Math.max(0, g.loyalty - 2);
             else if (g.morale > 70) g.loyalty = Math.min(100, g.loyalty + 1);
         }
     });
 
+    gameState.weeklyStats.income += income;
+
     if (income > 0) {
         let afterTax = income;
-        if (gameState.yakuzaProtection) afterTax -= Math.floor(income * gameState.profitTax / 100);
+        if (gameState.yakuzaProtection && gameState.profitTax > 0)
+            afterTax -= Math.floor(income * gameState.profitTax / 100);
         gameState.money += afterTax;
-        logEvent(`📊 Dzienny przychód: ¥${afterTax.toLocaleString()}`, 'income');
+        if (gameState.yakuzaProtection && gameState.profitTax > 0)
+            logEvent('📊 Przychód: ¥' + afterTax.toLocaleString() + ' (podatek: ¥' + (income - afterTax).toLocaleString() + ')', 'income');
+        else
+            logEvent('📊 Dzienny przychód: ¥' + afterTax.toLocaleString(), 'income');
     }
 
-    gameState.debt += Math.floor(gameState.debt * 0.0008);
+    if (gameState.debt > 0) gameState.debt += Math.floor(gameState.debt * 0.0008);
+
     updateAverageMorale();
 
-    if (gameState.time.day % 7 === 0) saveGame(true);
+    if (gameState.totalDays > 0 && gameState.totalDays % 7 === 0) {
+        showWeeklyReport();
+        gameState.weeklyStats = { income: 0, events: 0, trained: 0 };
+        saveGame(true);
+    }
 }
 
 // ============================================================================
 // CALCULATIONS
 // ============================================================================
-
 function calculateIncome(girl, jobKey) {
     const job = JOBS_DATA[jobKey];
-    if (!job) return 0;
-
+    if (!job || job.baseIncome === 0) return 0;
     let income = job.baseIncome;
     income *= (1 + girl.loyalty / 200);
-    income *= (0.5 + girl.morale / 200);
-
+    income *= (girl.morale / 100);
     const req = job.requiredSkills || {};
-    for (let skill in req) {
-        if (girl.skills[skill]) income *= (1 + girl.skills[skill] / 300);
-    }
-
+    for (let skill in req) { if (girl.skills[skill]) income *= (1 + girl.skills[skill] / 300); }
     return Math.floor(income);
 }
 
 function canAssignJob(girl, jobKey) {
     const job = JOBS_DATA[jobKey];
     if (!job || !gameState.unlockedJobs.includes(jobKey)) return false;
-    if (girl.lewdness < job.requiredLewdness) return false;
-
+    if (jobKey === 'none') return true;
+    if (girl.lewdness < (job.requiredLewdness || 0)) return false;
     const req = job.requiredSkills || {};
-    for (let skill in req) {
-        if ((girl.skills[skill] || 0) < req[skill]) return false;
-    }
+    for (let skill in req) { if ((girl.skills[skill] || 0) < req[skill]) return false; }
     return true;
 }
 
 function updateAverageMorale() {
-    if (gameState.girls.length === 0) { gameState.moraleTotal = 0; return; }
-    gameState.moraleTotal = Math.floor(gameState.girls.reduce((s,g) => s + g.morale, 0) / gameState.girls.length);
+    if (!gameState.girls.length) { gameState.moraleTotal = 0; return; }
+    gameState.moraleTotal = Math.floor(gameState.girls.reduce((s, g) => s + g.morale, 0) / gameState.girls.length);
+}
+
+function getReputationLabel(rep) {
+    if (rep >= 90) return { label: "Legenda",  color: "#f1c40f" };
+    if (rep >= 70) return { label: "Sławny",   color: "#e67e22" };
+    if (rep >= 50) return { label: "Znany",    color: "#3498db" };
+    if (rep >= 30) return { label: "Lokalny",  color: "#95a5a6" };
+    return             { label: "Nieznany", color: "#7f8c8d" };
+}
+
+function getGirlBondLevel(loyalty) {
+    let level = GIRL_BOND_LEVELS[0];
+    for (const l of GIRL_BOND_LEVELS) { if (loyalty >= l.threshold) level = l; }
+    return level;
+}
+
+function getNPCRelLabel(val) {
+    let level = RELATIONSHIP_LEVELS[0];
+    for (const l of RELATIONSHIP_LEVELS) { if (val >= l.threshold) level = l; }
+    return level;
+}
+
+// ============================================================================
+// NPC EFFECTS (called from events.js via applyUniversalEffects)
+// ============================================================================
+function applyNpcEffect(effect) {
+    if (!effect || !effect.npc) return;
+    if (gameState.npcRelationships[effect.npc] === undefined) gameState.npcRelationships[effect.npc] = 0;
+    gameState.npcRelationships[effect.npc] = clamp(gameState.npcRelationships[effect.npc] + effect.value, -100, 100);
+    const npc = NPC_DATA[effect.npc];
+    const rel = getNPCRelLabel(gameState.npcRelationships[effect.npc]);
+    logEvent('🎭 ' + (npc ? npc.name : effect.npc) + ': relacja → ' + rel.label, 'npc');
+}
+
+// ============================================================================
+// ACHIEVEMENTS
+// ============================================================================
+function checkAchievements() {
+    ACHIEVEMENTS_DATA.forEach(ach => {
+        if (gameState.earnedAchievements.includes(ach.id)) return;
+        try {
+            if (ach.condition(gameState)) {
+                gameState.earnedAchievements.push(ach.id);
+                achievementQueue.push(ach);
+                logEvent('🏆 Osiągnięcie: ' + ach.title, 'achievement');
+            }
+        } catch(e) { /* condition may reference undefined data */ }
+    });
+}
+
+function showNextAchievement() {
+    const ach = achievementQueue.shift();
+    if (!ach) return;
+    document.getElementById('ach-icon').textContent  = ach.icon;
+    document.getElementById('ach-title').textContent = ach.title;
+    document.getElementById('ach-desc').textContent  = ach.desc;
+    document.getElementById('achievement-modal').classList.add('active');
+    showToast('🏆 ' + ach.title, 'success');
+}
+
+function closeAchievementModal() {
+    document.getElementById('achievement-modal').classList.remove('active');
+}
+
+// ============================================================================
+// WEEKLY REPORT
+// ============================================================================
+function showWeeklyReport() {
+    const ws = gameState.weeklyStats;
+    const netIncome = gameState.yakuzaProtection
+        ? Math.floor(ws.income * (1 - gameState.profitTax / 100)) : ws.income;
+
+    document.getElementById('weekly-title').textContent =
+        '📊 Raport Tygodniowy – ' + gameState.time.day + '/' + gameState.time.month + '/' + gameState.time.year;
+
+    document.getElementById('weekly-body').innerHTML =
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:20px 0;">' +
+        '<div class="dashboard-card" style="text-align:center;"><div style="font-size:1.8em;color:var(--accent-secondary);">¥' + netIncome.toLocaleString() + '</div><div style="color:var(--text-secondary)">Przychód netto</div></div>' +
+        '<div class="dashboard-card" style="text-align:center;"><div style="font-size:1.8em;color:var(--accent-primary);">' + ws.events + '</div><div style="color:var(--text-secondary)">Wydarzeń</div></div>' +
+        '<div class="dashboard-card" style="text-align:center;"><div style="font-size:1.8em;color:' + (gameState.moraleTotal > 60 ? 'var(--success)' : 'var(--warning)') + ';">' + gameState.moraleTotal + '%</div><div style="color:var(--text-secondary)">Śr. Morale</div></div>' +
+        '<div class="dashboard-card" style="text-align:center;"><div style="font-size:1.8em;color:' + (gameState.risk > 60 ? 'var(--danger)' : 'var(--success)') + ';">' + gameState.risk + '%</div><div style="color:var(--text-secondary)">Ryzyko</div></div>' +
+        '</div><p style="color:var(--text-secondary);font-size:0.9em;">' +
+        (gameState.debt > 0 ? 'Pozostały dług: ¥' + gameState.debt.toLocaleString() : '✅ Dług spłacony!') + '</p>';
+
+    document.getElementById('weekly-modal').classList.add('active');
+    gameState.isPaused = true;
+    document.getElementById('pause-btn').textContent = '⏸ Pauza';
+}
+
+function closeWeeklyReport() {
+    document.getElementById('weekly-modal').classList.remove('active');
+    gameState.isPaused = false;
+    document.getElementById('pause-btn').textContent = '▶ Start';
+}
+
+// ============================================================================
+// TOAST NOTIFICATIONS
+// ============================================================================
+function showToast(message, type) {
+    type = type || 'info';
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = 'toast toast-' + type;
+    toast.textContent = message;
+    container.appendChild(toast);
+    setTimeout(function() { toast.classList.add('toast-show'); }, 10);
+    setTimeout(function() {
+        toast.classList.remove('toast-show');
+        setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 400);
+    }, 3500);
 }
 
 // ============================================================================
 // UI UPDATES
 // ============================================================================
-
 let lastGirlsRender = 0;
-const GIRLS_RENDER_COOLDOWN_MS = 1800;   // 1.8 sekundy
+const GIRLS_RENDER_COOLDOWN_MS = 1800;
 
 function updateAll() {
     updateTime();
     updateDashboard();
-
     const now = Date.now();
-
-    if (document.getElementById('page-girls').classList.contains('active')) {
-        if (now - lastGirlsRender >= GIRLS_RENDER_COOLDOWN_MS) {
-            renderGirls();
-            lastGirlsRender = now;
-        }
+    if (document.getElementById('page-girls').classList.contains('active') &&
+        now - lastGirlsRender >= GIRLS_RENDER_COOLDOWN_MS) {
+        renderGirls();
+        lastGirlsRender = now;
     }
 }
 
 function updateTime() {
-    const days = ['Ndz','Pon','Wt','Śr','Czw','Pt','Sob'];
+    const days   = ['Ndz','Pon','Wt','Śr','Czw','Pt','Sob'];
     const months = ['','Sty','Lut','Mar','Kwi','Maj','Cze','Lip','Sie','Wrz','Paź','Lis','Gru'];
     document.getElementById('current-hour').textContent = String(gameState.time.hour).padStart(2,'0') + ':00';
-    document.getElementById('current-day').textContent = days[gameState.time.dayOfWeek];
-    document.getElementById('current-date').textContent = `${gameState.time.day} ${months[gameState.time.month]} ${gameState.time.year}`;
+    document.getElementById('current-day').textContent  = days[gameState.time.dayOfWeek];
+    document.getElementById('current-date').textContent = gameState.time.day + ' ' + months[gameState.time.month] + ' ' + gameState.time.year;
 }
 
 function updateDashboard() {
-    document.getElementById('money').textContent = `¥${gameState.money.toLocaleString()}`;
-    document.getElementById('debt').textContent = `¥${gameState.debt.toLocaleString()}`;
-    document.getElementById('reputation').textContent = gameState.reputation;
-    document.getElementById('morale').textContent = `${gameState.moraleTotal}%`;
+    document.getElementById('money').textContent = '¥' + gameState.money.toLocaleString();
+    document.getElementById('debt').textContent  = '¥' + gameState.debt.toLocaleString();
 
-    const avg = gameState.girls.length ? gameState.girls.reduce((s,g) => s + g.grades, 0) / gameState.girls.length : 0;
+    const repInfo = getReputationLabel(gameState.reputation);
+    document.getElementById('reputation').textContent = gameState.reputation;
+    var repLabelEl = document.getElementById('rep-label');
+    repLabelEl.textContent = repInfo.label;
+    repLabelEl.style.color = repInfo.color;
+
+    document.getElementById('morale').textContent = gameState.moraleTotal + '%';
+
+    var riskEl = document.getElementById('risk');
+    riskEl.textContent = gameState.risk + '%';
+    riskEl.style.color = gameState.risk >= 70 ? 'var(--danger)' : gameState.risk >= 40 ? 'var(--warning)' : 'var(--success)';
+
+    var avg = gameState.girls.length ? gameState.girls.reduce(function(s,g){return s+g.grades;},0) / gameState.girls.length : 0;
     document.getElementById('grades').textContent = avg.toFixed(1);
 
-    const income = gameState.girls.reduce((s,g) => s + (g.currentJob !== 'none' ? calculateIncome(g, g.currentJob) : 0), 0);
-    document.getElementById('daily-income').textContent = `¥${income.toLocaleString()}`;
+    var grossIncome = gameState.girls.reduce(function(s,g){
+        return s + (g.currentJob !== 'none' ? calculateIncome(g,g.currentJob) : 0);
+    }, 0);
+    var taxAmount = (gameState.yakuzaProtection && gameState.profitTax > 0)
+        ? Math.floor(grossIncome * gameState.profitTax / 100) : 0;
+    var netIncome = grossIncome - taxAmount;
 
-    const active = gameState.girls.filter(g => g.currentJob !== 'none').length;
-    document.getElementById('active-girls').textContent = `${active}/${gameState.girls.length}`;
+    document.getElementById('daily-income').textContent = '¥' + grossIncome.toLocaleString();
+    document.getElementById('income-after-tax').textContent = taxAmount > 0
+        ? 'Po podatku: ¥' + netIncome.toLocaleString() + ' (-¥' + taxAmount.toLocaleString() + ')' : '';
+    document.getElementById('income-projection').textContent = grossIncome > 0
+        ? 'Miesięczna prognoza: ¥' + (netIncome * 30).toLocaleString() : '';
 
-    // Breakdown
-    const breakdown = {};
-    gameState.girls.forEach(g => {
+    var debtEl = document.getElementById('debt-payoff-estimate');
+    if (gameState.debt <= 0) {
+        debtEl.textContent = '✅ Dług spłacony!';
+        debtEl.style.color = 'var(--success)';
+    } else if (netIncome > 0) {
+        debtEl.textContent = 'Spłata długu za ~' + Math.ceil(gameState.debt / netIncome) + ' dni';
+        debtEl.style.color = 'var(--warning)';
+    } else {
+        debtEl.textContent = 'Brak przychodów – dług rośnie';
+        debtEl.style.color = 'var(--danger)';
+    }
+
+    var active = gameState.girls.filter(function(g){return g.currentJob !== 'none';}).length;
+    document.getElementById('active-girls').textContent = active + '/' + gameState.girls.length;
+
+    document.getElementById('team-morale-status').innerHTML = 'Morale: <span style="color:' +
+        (gameState.moraleTotal>=60?'var(--success)':gameState.moraleTotal>=35?'var(--warning)':'var(--danger)') + '">' +
+        (gameState.moraleTotal>=60?'😊 Dobre':gameState.moraleTotal>=35?'😐 Średnie':'😰 Krytyczne') + '</span>';
+    document.getElementById('team-risk-status').innerHTML = 'Ryzyko: <span style="color:' +
+        (gameState.risk<=30?'var(--success)':gameState.risk<=60?'var(--warning)':'var(--danger)') + '">' +
+        (gameState.risk<=30?'🛡️ Bezpieczne':gameState.risk<=60?'⚠️ Podwyższone':'🚨 Krytyczne') + '</span>';
+
+    var breakdown = {};
+    gameState.girls.forEach(function(g) {
         if (g.currentJob !== 'none') {
-            const job = JOBS_DATA[g.currentJob].name;
-            breakdown[job] = (breakdown[job] || 0) + calculateIncome(g, g.currentJob);
+            var job = JOBS_DATA[g.currentJob].name;
+            breakdown[job] = (breakdown[job]||0) + calculateIncome(g, g.currentJob);
         }
     });
-    let breakdownText = '';
-    for (let job in breakdown) {
-        breakdownText += `${job}: ¥${breakdown[job].toLocaleString()}<br>`;
+    var bText = '';
+    for (var job in breakdown) bText += job + ': ¥' + breakdown[job].toLocaleString() + '<br>';
+    document.getElementById('income-breakdown').innerHTML = bText || '<span style="color:var(--text-secondary)">Brak przychodów</span>';
+
+    renderNPCSummary();
+
+    var loreLines = [
+        "Tokio, 2025. Seiran Academy skrywa tajemnicę.",
+        "Każdy ma swój dług. Twój jest bardziej dosłowny.",
+        "Detektyw Mori przechodzi obok szkoły dwa razy dziennie.",
+        "Takeshi pyta o ciebie. To nie zawsze dobry znak.",
+        "Madame Hiroko ogłosiła nowe usługi w Roppongi.",
+        "Szum plotek krąży wśród uczennic. Pani Fujimoto się przysłuchuje."
+    ];
+    var loreEl = document.getElementById('dash-lore-text');
+    if (!loreEl._loreSet) {
+        loreEl.textContent = loreLines[Math.floor(Math.random() * loreLines.length)];
+        loreEl._loreSet = true;
+        // refresh lore every ~5 real minutes at 1x speed
+        setTimeout(function(){ loreEl._loreSet = false; }, 300000);
     }
-    document.getElementById('income-breakdown').innerHTML = breakdownText || 'Brak przychodów';
 }
 
+function renderNPCSummary() {
+    var el = document.getElementById('npc-summary');
+    if (!el) return;
+    var html = '';
+    Object.keys(NPC_DATA).forEach(function(id) {
+        var npc = NPC_DATA[id];
+        var val = gameState.npcRelationships[id] !== undefined ? gameState.npcRelationships[id] : npc.initialRelationship;
+        var rel = getNPCRelLabel(val);
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0;font-size:0.9em;">' +
+            '<span>' + npc.portrait + ' ' + npc.name + '</span>' +
+            '<span style="color:' + rel.color + ';font-weight:bold;">' + rel.label + '</span></div>';
+    });
+    el.innerHTML = html || '<p style="color:var(--text-secondary)">Brak kontaktów.</p>';
+}
+
+// ============================================================================
+// GIRLS RENDER
+// ============================================================================
 function renderGirls() {
-    const container = document.getElementById('girls-list');
+    var container = document.getElementById('girls-list');
     if (!gameState.girls.length) {
         container.innerHTML = '<p>Brak dziewczyn. Rekrutuj przez wydarzenia!</p>';
         return;
     }
+    var html = '';
+    gameState.girls.forEach(function(g) {
+        var job    = JOBS_DATA[g.currentJob];
+        var income = calculateIncome(g, g.currentJob);
+        var onComfortCooldown = !!gameState.comfortCooldowns[g.id];
+        var bond   = getGirlBondLevel(g.loyalty);
 
-    let html = '';
-    gameState.girls.forEach(g => {
-        const job = JOBS_DATA[g.currentJob];
-        const income = calculateIncome(g, g.currentJob);
+        var statusBadge = '<span class="status-badge status-idle">😴 Wolna</span>';
+        if (g.currentJob !== 'none') {
+            statusBadge = JOBS_DATA[g.currentJob].risk > 50
+                ? '<span class="status-badge status-danger">⚠️ Ryzykowna praca</span>'
+                : '<span class="status-badge status-working">💼 Pracuje</span>';
+        }
+        if (g.morale <= 20) statusBadge += ' <span class="status-badge status-stressed">😰 Wyczerpana</span>';
 
-        html += `<div class="girl-card">
-            <h3>${g.name} (${g.age} lat)</h3>
-            <p><strong>${g.personality}</strong></p>
-            <p><em>${g.backstory}</em></p>
-            <p>Cechy: ${g.traits.join(', ')}</p>
+        var traitTags = g.traits.map(function(t){ return '<span class="trait-tag">' + t + '</span>'; }).join(' ');
 
-            <div class="girl-stats">
-                ${renderStat('Lojalność', g.loyalty)}
-                ${renderStat('Lewdness', g.lewdness)}
-                ${renderStat('Morale', g.morale)}
-                ${renderStat('Oceny', g.grades, true)}
-                ${renderSkills(g.skills)}
-            </div>
-
-            <hr style="margin:15px 0;border-color:rgba(255,255,255,0.1);">
-
-            <p><strong>Praca:</strong> ${job.name}</p>
-            <p><strong>Dzienny dochód:</strong> ¥${income.toLocaleString()}</p>
-
-            <select onchange="changeJob(${g.id}, this.value)" style="width:100%;padding:8px;margin:10px 0;">
-                ${Object.keys(JOBS_DATA).filter(j => gameState.unlockedJobs.includes(j)).map(j => {
-                    const canDo = canAssignJob(g, j);
-                    return `<option value="${j}" ${g.currentJob === j ? 'selected' : ''} ${!canDo ? 'disabled' : ''}>
-                        ${JOBS_DATA[j].name} ${!canDo ? '(🔒)' : ''}
-                    </option>`;
-                }).join('')}
-            </select>
-
-            ${Object.keys(JOBS_DATA).map(j => {
-                if (j === 'none' || gameState.unlockedJobs.includes(j)) return '';
-                return `<p style="font-size:0.85em;color:var(--text-secondary);">🔒 ${JOBS_DATA[j].name} - odblokuj przez wydarzenia</p>`;
-            }).join('')}
-
-            <div style="display:flex;gap:5px;margin-top:10px;">
-                <button onclick="trainGirl(${g.id})" class="action-btn" style="flex:1;" ${gameState.money < 15000 ? 'disabled' : ''}>
-                    📚 Trening (¥15k)
-                </button>
-                <button onclick="comfortGirl(${g.id})" class="action-btn" style="flex:1;" ${g.morale >= 90 ? 'disabled' : ''}>
-                    ❤️ Pociesz ${g.morale >= 90 ? '(≥90%)' : ''}
-                </button>
-            </div>
-        </div>`;
+        html += '<div class="girl-card">' +
+            '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
+            '<h3>' + g.name + ' <span style="font-size:0.7em;color:var(--text-secondary)">(' + g.age + ' lat)</span></h3>' +
+            '<span class="bond-badge" title="Więź">' + bond.icon + ' ' + bond.label + '</span></div>' +
+            '<div style="margin:4px 0 8px 0;">' + statusBadge + '</div>' +
+            '<p><strong>' + g.personality + '</strong></p>' +
+            '<p style="font-size:0.85em;color:var(--text-secondary);font-style:italic;">' + g.backstory + '</p>' +
+            '<p style="font-size:0.85em;margin-top:4px;">Cechy: ' + traitTags + '</p>' +
+            '<div class="girl-stats">' +
+            renderStat('Lojalność', g.loyalty, false, g.loyalty>=80?'stat-high':g.loyalty<=30?'stat-low':'') +
+            renderStat('Lewdness',  g.lewdness) +
+            renderStat('Morale',    g.morale, false, g.morale>=70?'stat-high':g.morale<=25?'stat-low':'') +
+            renderStat('Oceny',     g.grades, true) +
+            '</div>' +
+            '<details style="margin:8px 0;"><summary style="cursor:pointer;color:var(--text-secondary);font-size:0.9em;">📊 Umiejętności</summary>' +
+            renderSkills(g.skills) + '</details>' +
+            '<hr style="margin:12px 0;border-color:rgba(255,255,255,0.1);">' +
+            '<p><strong>Praca:</strong> ' + job.name + '</p>' +
+            '<p><strong>Dochód/dzień:</strong> <span style="color:var(--accent-secondary)">¥' + income.toLocaleString() + '</span></p>' +
+            '<select onchange="changeJob(' + g.id + ', this.value)" style="width:100%;padding:8px;margin:10px 0;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--text-primary);border-radius:4px;">' +
+            Object.keys(JOBS_DATA).filter(function(j){ return gameState.unlockedJobs.includes(j); }).map(function(j) {
+                var canDo = canAssignJob(g, j);
+                return '<option value="' + j + '"' + (g.currentJob===j?' selected':'') + (!canDo?' disabled':'') + '>' + JOBS_DATA[j].name + (!canDo?' (🔒)':'') + '</option>';
+            }).join('') + '</select>' +
+            Object.keys(JOBS_DATA).filter(function(j){ return j!=='none' && !gameState.unlockedJobs.includes(j); }).map(function(j) {
+                return '<p style="font-size:0.8em;color:var(--text-secondary);">🔒 ' + JOBS_DATA[j].name + ' – odblokuj przez wydarzenia</p>';
+            }).join('') +
+            '<div style="display:flex;gap:5px;margin-top:10px;flex-wrap:wrap;">' +
+            '<button onclick="openTrainingModal(' + g.id + ')" class="action-btn" style="flex:1;min-width:110px;">📚 Trenuj</button>' +
+            '<button onclick="comfortGirl(' + g.id + ')" class="action-btn" style="flex:1;min-width:110px;"' +
+            (g.morale>=90||onComfortCooldown?' disabled':'') + '>❤️ Pociesz ' +
+            (g.morale>=90?'(≥90%)':onComfortCooldown?'(cd)':'') + '</button>' +
+            '</div></div>';
     });
-
     container.innerHTML = html;
 }
 
-function renderStat(label, value, noBar) {
-    return `
-        <div class="girl-stat">
-            <span class="label">${label}:</span>
-            <span class="value">${value}${noBar ? '' : '%'}</span>
-        </div>
-        ${noBar ? '' : `<div class="progress-bar"><div class="progress-fill" style="width:${value}%"></div></div>`}
-    `;
+function renderStat(label, value, noBar, extraClass) {
+    extraClass = extraClass || '';
+    return '<div class="girl-stat"><span class="label">' + label + ':</span>' +
+        '<span class="value ' + extraClass + '">' + value + (noBar?'':'%') + '</span></div>' +
+        (noBar ? '' : '<div class="progress-bar"><div class="progress-fill ' + extraClass + '" style="width:' + value + '%"></div></div>');
 }
 
 function renderSkills(skills) {
-    let html = '<div style="margin-top:10px;font-size:0.9em;">';
-    for (let skill in skills) {
-        html += `<div style="display:flex;justify-content:space-between;margin:3px 0;">
-            <span style="text-transform:capitalize;">${skill}:</span>
-            <span style="color:var(--accent-secondary);">${skills[skill]}</span>
-        </div>`;
+    var html = '<div style="margin-top:8px;font-size:0.88em;display:grid;grid-template-columns:1fr 1fr;gap:3px 10px;">';
+    for (var skill in skills) {
+        var v = skills[skill];
+        var col = v>=70?'var(--success)':v>=40?'var(--accent-secondary)':'var(--text-secondary)';
+        html += '<div style="display:flex;justify-content:space-between;"><span style="text-transform:capitalize;color:var(--text-secondary)">' + skill + ':</span><span style="color:' + col + ';font-weight:bold;">' + v + '</span></div>';
     }
     return html + '</div>';
 }
 
+// ============================================================================
+// TARGETED TRAINING MODAL
+// ============================================================================
+var trainingTargetId = null;
+
+function openTrainingModal(girlId) {
+    trainingTargetId = girlId;
+    var girl = gameState.girls.find(function(g){ return g.id===girlId; });
+    if (!girl) return;
+
+    document.getElementById('training-girl-name').textContent = 'Trening: ' + girl.name;
+    var container = document.getElementById('training-options');
+    var html = '';
+
+    TRAINING_OPTIONS.forEach(function(opt) {
+        var canAfford     = gameState.money >= opt.cost;
+        var meetsLewdness = !opt.requiredLewdness || girl.lewdness >= opt.requiredLewdness;
+        var disabled      = !canAfford || !meetsLewdness;
+        var reason        = !canAfford ? 'Za mało ¥' : (!meetsLewdness ? 'Wymaga Lewdness ' + opt.requiredLewdness + '+' : '');
+
+        html += '<div class="investment-card" style="' + (disabled?'opacity:0.5;':'') + '">' +
+            '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+            '<strong>' + opt.name + '</strong>' +
+            '<span style="color:var(--accent-secondary);">¥' + opt.cost.toLocaleString() + '</span></div>' +
+            '<p style="font-size:0.9em;color:var(--text-secondary);margin:5px 0;">' + opt.description + '</p>' +
+            '<button onclick="executeTraining(\'' + opt.id + '\')" class="action-btn"' + (disabled?' disabled':'') + '>' +
+            (disabled ? (reason||'Niedostępne') : 'Rozpocznij Trening') + '</button></div>';
+    });
+    container.innerHTML = html;
+    document.getElementById('training-modal').classList.add('active');
+    gameState.isPaused = true;
+    document.getElementById('pause-btn').textContent = '⏸ Pauza';
+}
+
+function closeTrainingModal() {
+    document.getElementById('training-modal').classList.remove('active');
+    gameState.isPaused = false;
+    document.getElementById('pause-btn').textContent = '▶ Start';
+    trainingTargetId = null;
+}
+
+function executeTraining(optId) {
+    var girl = gameState.girls.find(function(g){ return g.id===trainingTargetId; });
+    var opt  = TRAINING_OPTIONS.find(function(o){ return o.id===optId; });
+    if (!girl || !opt || gameState.money < opt.cost) return;
+
+    gameState.money -= opt.cost;
+    var e = opt.effects;
+    var logParts = [];
+
+    function rng(arr) { return arr[0] + Math.floor(Math.random()*(arr[1]-arr[0]+1)); }
+
+    if (e.lewdness)    { var g1=rng(e.lewdness);    girl.lewdness=clamp(girl.lewdness+g1,0,100);    logParts.push('Lewdness +'+g1); }
+    if (e.grades)      { var g2=rng(e.grades);      girl.grades=clamp(girl.grades+g2,0,100);        logParts.push('Oceny +'+g2); }
+    if (e.morale !== undefined) {
+        var g3 = Array.isArray(e.morale) ? rng(e.morale) : e.morale;
+        girl.morale=clamp(girl.morale+g3,0,100);
+        logParts.push('Morale '+(g3>0?'+':'')+g3);
+    }
+    if (e.loyalty)     { var g4=rng(e.loyalty);     girl.loyalty=clamp(girl.loyalty+g4,0,100);      logParts.push('Lojalność +'+g4); }
+    if (e.randomSkill) {
+        var skills=Object.keys(girl.skills);
+        var sk=skills[Math.floor(Math.random()*skills.length)];
+        var g5=rng(e.randomSkill);
+        girl.skills[sk]=clamp(girl.skills[sk]+g5,0,100);
+        logParts.push(sk+' +'+g5);
+    }
+    if (e.skills) {
+        for (var skill in e.skills) {
+            var g6=rng(e.skills[skill]);
+            girl.skills[skill]=clamp((girl.skills[skill]||0)+g6,0,100);
+            logParts.push(skill+' +'+g6);
+        }
+    }
+
+    gameState.weeklyStats.trained++;
+    updateAverageMorale();
+    logEvent('📚 ' + girl.name + ': ' + opt.name + ' – ' + logParts.join(', '), 'training');
+    showToast(girl.name + ': ' + opt.name + ' zakończony!', 'info');
+    closeTrainingModal();
+    updateAll();
+}
+
+// ============================================================================
+// GIRL ACTIONS
+// ============================================================================
 function changeJob(girlId, jobKey) {
-    const girl = gameState.girls.find(g => g.id === girlId);
+    var girl = gameState.girls.find(function(g){ return g.id===girlId; });
+    if (!girl) return;
     if (canAssignJob(girl, jobKey)) {
         girl.currentJob = jobKey;
-        logEvent(`${girl.name} → ${JOBS_DATA[jobKey].name}`, 'job');
+        logEvent(girl.name + ' → ' + JOBS_DATA[jobKey].name, 'job');
+        showToast(girl.name + ' → ' + JOBS_DATA[jobKey].name, 'info');
         renderGirls();
         updateDashboard();
     }
 }
 
-function trainGirl(girlId) {
-    if (gameState.money < 15000) return;
-    const girl = gameState.girls.find(g => g.id === girlId);
-    gameState.money -= 15000;
-    const gain = 8 + Math.floor(Math.random() * 5);
-    girl.lewdness = Math.min(100, girl.lewdness + gain);
-    girl.morale = Math.max(0, girl.morale - 3);
-
-    // Train random skill
-    const skills = Object.keys(girl.skills);
-    const skill = skills[Math.floor(Math.random() * skills.length)];
-    girl.skills[skill] = Math.min(100, girl.skills[skill] + 3 + Math.floor(Math.random() * 3));
-
-    logEvent(`${girl.name}: Lewdness +${gain}, ${skill} +trening`, 'training');
-    renderGirls();
-    updateDashboard();
-}
-
 function comfortGirl(girlId) {
-    cooldown: 24;
-    const girl = gameState.girls.find(g => g.id === girlId);
-    if (girl.morale >= 90) return;
-    girl.morale = Math.min(100, girl.morale + 15);
-    girl.loyalty = Math.min(100, girl.loyalty + 5);
-    logEvent(`Pocieszyłeś ${girl.name}`, 'comfort');
+    var girl = gameState.girls.find(function(g){ return g.id===girlId; });
+    if (!girl || girl.morale>=90 || gameState.comfortCooldowns[girlId]) return;
+    girl.morale  = clamp(girl.morale  + 15, 0, 100);
+    girl.loyalty = clamp(girl.loyalty +  5, 0, 100);
+    gameState.comfortCooldowns[girlId] = 24;
+    updateAverageMorale();
+    logEvent('❤️ Pocieszyłeś ' + girl.name, 'comfort');
     renderGirls();
     updateDashboard();
 }
@@ -513,24 +800,62 @@ function payDebt(amount) {
     amount = Math.min(amount, gameState.money, gameState.debt);
     if (amount <= 0) return;
     gameState.money -= amount;
-    gameState.debt -= amount;
-    logEvent(`Spłacono ¥${amount.toLocaleString()} długu`, 'debt');
+    gameState.debt  -= amount;
+    if (gameState.debt < 0) gameState.debt = 0;
+    logEvent('💳 Spłacono ¥' + amount.toLocaleString() + ' długu', 'debt');
     updateDashboard();
-
     if (gameState.debt <= 0) {
-        alert('🎉 DŁUG SPŁACONY! Gratulacje! Teraz możesz rozwijać imperium bez presji.');
         gameState.debt = 0;
+        alert('🎉 DŁUG SPŁACONY! Gratulacje!');
+        checkAchievements();
     }
 }
 
 // ============================================================================
-// START
+// NPC PAGE
 // ============================================================================
+function renderNPCs() {
+    var container = document.getElementById('npcs-list');
+    var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;">';
+    Object.keys(NPC_DATA).forEach(function(id) {
+        var npc = NPC_DATA[id];
+        var val = gameState.npcRelationships[id] !== undefined ? gameState.npcRelationships[id] : npc.initialRelationship;
+        var rel = getNPCRelLabel(val);
+        var barWidth = Math.round((val + 100) / 2);
+        html += '<div class="dashboard-card">' +
+            '<div style="display:flex;align-items:center;gap:15px;margin-bottom:12px;">' +
+            '<span style="font-size:2.5em;">' + npc.portrait + '</span>' +
+            '<div><h3 style="margin:0;font-size:1.2em;">' + npc.name + '</h3>' +
+            '<p style="color:var(--text-secondary);font-size:0.85em;margin:2px 0;">' + npc.role + '</p></div></div>' +
+            '<p style="font-size:0.9em;font-style:italic;color:var(--text-secondary);margin-bottom:12px;">' + npc.description + '</p>' +
+            '<div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:0.9em;">' +
+            '<span>Stosunek:</span><span style="color:' + rel.color + ';font-weight:bold;">' + rel.label + ' (' + (val>0?'+':'') + val + ')</span></div>' +
+            '<div class="progress-bar" style="height:6px;"><div class="progress-fill" style="width:' + barWidth + '%;background:' + rel.color + ';"></div></div>' +
+            '</div>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+// ============================================================================
+// ACHIEVEMENTS PAGE
+// ============================================================================
+function renderAchievements() {
+    var container = document.getElementById('achievements-list');
+    var earned = gameState.earnedAchievements.length;
+    document.getElementById('ach-progress').textContent = 'Zdobyte: ' + earned + ' / ' + ACHIEVEMENTS_DATA.length;
+    var html = '';
+    ACHIEVEMENTS_DATA.forEach(function(ach) {
+        var done = gameState.earnedAchievements.includes(ach.id);
+        html += '<div class="dashboard-card" style="text-align:center;' + (!done?'opacity:0.4;filter:grayscale(1);':'') + '">' +
+            '<div style="font-size:2.5em;margin-bottom:8px;">' + (done?ach.icon:'🔒') + '</div>' +
+            '<strong>' + (done?ach.title:'???') + '</strong>' +
+            '<p style="color:var(--text-secondary);font-size:0.85em;margin-top:5px;">' + (done?ach.desc:'Zdobądź to osiągnięcie') + '</p></div>';
+    });
+    container.innerHTML = html;
+}
 
 document.addEventListener('DOMContentLoaded', initGame);
-    </script>
-    <script src="js/events.js"></script>
-    <script src="js/cbs.js"></script>
-    <script src="js/save.js"></script>
+</script>
 </body>
 </html>
