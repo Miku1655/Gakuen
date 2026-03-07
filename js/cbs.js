@@ -29,9 +29,12 @@ function buyInvestment(id) {
 
     const e = inv.effects;
     if (e.reputation) gameState.reputation += e.reputation;
-    if (e.grades) gameState.girls.forEach(g => g.grades = Math.min(100, g.grades + e.grades));
-    if (e.morale) gameState.girls.forEach(g => g.morale = Math.min(100, g.morale + e.morale));
-    if (e.risk) gameState.risk = Math.max(0, gameState.risk + e.risk);
+    if (e.grades)     gameState.girls.forEach(g => g.grades  = Math.min(100, g.grades  + e.grades));
+    if (e.morale)     gameState.girls.forEach(g => g.morale  = Math.min(100, g.morale  + e.morale));
+    if (e.risk)       gameState.risk = Math.max(0, gameState.risk + e.risk);
+
+    // BUG FIX: school investments changed morale but moraleTotal was never recalculated
+    updateAverageMorale();
 
     logEvent(`🏫 Kupiono: ${inv.name}`, 'school');
     renderSchool();
@@ -76,9 +79,9 @@ function renderBusiness() {
 function renderCities() {
     const container = document.getElementById('city-locations');
     const cities = [
-        { name: 'Tokio', desc: 'Twoja obecna lokacja. Seiran Academy.', yakuza: true, police: 'średnia' },
-        { name: 'Osaka', desc: 'Drugie miasto. Tańsze biznesy, więcej Yakuzy.', yakuza: true, police: 'niska' },
-        { name: 'Kyoto', desc: 'Historyczne miasto. Wysokie wymagania.', yakuza: false, police: 'wysoka' }
+        { name: 'Tokio',  desc: 'Twoja obecna lokacja. Seiran Academy.', yakuza: true,  police: 'średnia' },
+        { name: 'Osaka',  desc: 'Drugie miasto. Tańsze biznesy, więcej Yakuzy.', yakuza: true, police: 'niska' },
+        { name: 'Kyoto',  desc: 'Historyczne miasto. Wysokie wymagania.', yakuza: false, police: 'wysoka' }
     ];
 
     let html = '<div class="cities-grid">';
