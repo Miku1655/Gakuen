@@ -28,6 +28,21 @@ function loadGame() {
         if (!loaded.totalDays)          loaded.totalDays          = 0;
         if (!loaded.milestonesShown)    loaded.milestonesShown    = [];
 
+        // Pacing system migration
+        if (!loaded.eventPacing) {
+            loaded.eventPacing = {
+                lastEventRealTime: 0,
+                dailyEventCount:   0,
+                maxEventsPerDay:   3,
+                eventFatigue:      0
+            };
+        }
+        // Ensure all subfields exist (for saves from before full pacing system)
+        if (loaded.eventPacing.lastEventRealTime === undefined) loaded.eventPacing.lastEventRealTime = 0;
+        if (loaded.eventPacing.dailyEventCount   === undefined) loaded.eventPacing.dailyEventCount   = 0;
+        if (loaded.eventPacing.maxEventsPerDay   === undefined) loaded.eventPacing.maxEventsPerDay   = 3;
+        if (loaded.eventPacing.eventFatigue      === undefined) loaded.eventPacing.eventFatigue      = 0;
+
         // Multi-city fields
         if (!loaded.activeSchoolId)     loaded.activeSchoolId     = 'seiran_academy';
         if (!loaded.schools)            loaded.schools            = {};
