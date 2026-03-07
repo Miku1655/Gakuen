@@ -95,6 +95,12 @@
         <button id="save-btn" class="action-btn">💾 Zapisz</button>
         <button id="load-btn" class="action-btn">📂 Wczytaj</button>
     </div>
+    <div class="menu-section" style="padding:10px 20px;">
+        <div id="pacing-indicator" style="text-align:center;min-height:20px;"></div>
+        <div id="pacing-bar-wrap" style="background:rgba(255,255,255,0.07);border-radius:4px;height:4px;margin-top:6px;overflow:hidden;">
+            <div id="pacing-bar" style="height:100%;width:0%;background:var(--accent-secondary);transition:width 1s linear;border-radius:4px;"></div>
+        </div>
+    </div>
 </div>
 
 <!-- MAIN CONTENT -->
@@ -233,6 +239,13 @@ var gameState = {
     unlockedJobs: ['none','school_dates','tutor'],
     completedEvents: [], eventLog: [], eventCooldowns: {},
     purchasedInvestments: [], nextGirlId: 1, lastEventCheck: 0,
+    // PACING SYSTEM
+    eventPacing: {
+        lastEventRealTime: 0,   // Date.now() when last event fired
+        dailyEventCount: 0,     // events fired today (resets at midnight)
+        maxEventsPerDay: 3,     // hard cap — no more than this per in-game day
+        eventFatigue: 0         // 0–100: rises after each event, decays over time
+    },
     comfortCooldowns: {},
     npcRelationships: {},
     earnedAchievements: [],
@@ -365,6 +378,117 @@ function setupUI() {
 // ============================================================================
 // GAME LOOP
 // ============================================================================
+
+// ============================================================================
+// EVENT PACING SYSTEM
+// Events are gated by real-world time, game speed, daily budget, and fatigue.
+// The goal: events feel like meaningful moments, not a constant stream.
+// ============================================================================
+
+// Minimum real-world milliseconds between events at 1x speed.
+// At higher speeds the gap shrinks, but never below MIN_EVENT_GAP_FLOOR_MS.
+var MIN_EVENT_GAP_BASE_MS  = 30000;  // 30s real at 1x  (~10 game hours gap feel)
+var MIN_EVENT_GAP_FLOOR_MS =  8000;  // 8s floor regardless of speed
+var EVENT_FATIGUE_DECAY_PER_TICK = 1.2;  // fatigue drops each tick even without overnight reset
+
+function maybeFireEvent() {
+    var p = gameState.eventPacing;
+
+    // 1. Hard cap: never fire while a modal is open
+    var anyModalOpen = document.querySelector('.modal.active');
+    if (anyModalOpen) return;
+
+    // 2. Daily budget: max 3 events per in-game day (configurable)
+    if (p.dailyEventCount >= p.maxEventsPerDay) return;
+
+    // 3. Time-of-day gate: events only between 08:00–22:00 in-game
+    var h = gameState.time.hour;
+    if (h < 8 || h > 21) return;
+
+    // 4. Real-time gap: enforce minimum wall-clock gap, scaled by game speed
+    var minGap = Math.max(MIN_EVENT_GAP_FLOOR_MS, MIN_EVENT_GAP_BASE_MS / gameState.gameSpeed);
+    var now = Date.now();
+    if (now - p.lastEventRealTime < minGap) return;
+
+    // 5. Fatigue gate: probability of firing drops as fatigue rises
+    //    fatigue 0   → base chance 12%
+    //    fatigue 50  → base chance 6%
+    //    fatigue 100 → base chance 1%
+    var baseChance = 0.12 * (1 - p.eventFatigue / 120);
+    baseChance = Math.max(0.01, baseChance);
+
+    // Decay fatigue each tick so it gradually recovers
+    p.eventFatigue = Math.max(0, p.eventFatigue - EVENT_FATIGUE_DECAY_PER_TICK);
+
+    if (Math.random() > baseChance) return;
+
+    // 6. Try to fire — update pacing state on success
+    var available = getAvailableEvents ? getAvailableEvents() : [];
+    if (!available.length) return;
+
+    var event = selectRandomEvent(available);
+    var eventInstance = prepareEventInstance(event);
+    if (!eventInstance) return;
+
+    // All gates passed — fire!
+    p.lastEventRealTime = now;
+    p.dailyEventCount++;
+    p.eventFatigue = Math.min(100, p.eventFatigue + 35);  // each event adds fatigue
+
+    showEvent(eventInstance);
+    // NOTE: handleEventCompletion is called by selectChoice (events.js) when player picks an option
+    updatePacingIndicator();
+}
+
+// ---- Visual indicator ----
+// Shows a "quiet → something approaching → active" build-up in the sidebar.
+// Called every tick so the bar animates smoothly.
+function updatePacingIndicator() {
+    var el  = document.getElementById('pacing-indicator');
+    var bar = document.getElementById('pacing-bar');
+    if (!el || !bar) return;
+
+    var p   = gameState.eventPacing;
+    var now = Date.now();
+    var minGap = Math.max(MIN_EVENT_GAP_FLOOR_MS, MIN_EVENT_GAP_BASE_MS / gameState.gameSpeed);
+    var elapsed = now - p.lastEventRealTime;
+    var pct   = Math.min(1, elapsed / minGap);   // 0 → 1 as gap fills up
+    var budget = p.maxEventsPerDay - p.dailyEventCount;
+    var h = gameState.time.hour;
+    var inWindow = h >= 8 && h <= 21;
+
+    if (gameState.isPaused) {
+        el.innerHTML = '<span style="color:var(--text-secondary);font-size:0.75em;">⏸ Pauza</span>';
+        bar.style.width = '0%';
+        bar.style.background = 'var(--text-secondary)';
+        return;
+    }
+    if (!inWindow) {
+        el.innerHTML = '<span style="color:var(--text-secondary);font-size:0.75em;">🌙 Noc — cisza</span>';
+        bar.style.width = '0%';
+        return;
+    }
+    if (budget <= 0) {
+        el.innerHTML = '<span style="color:var(--text-secondary);font-size:0.75em;">📅 Spokój do jutra</span>';
+        bar.style.width = '100%';
+        bar.style.background = 'var(--text-secondary)';
+        return;
+    }
+
+    // Animate bar and label based on how ready we are for the next event
+    bar.style.width = Math.round(pct * 100) + '%';
+    if (pct < 0.4) {
+        el.innerHTML = '<span style="color:var(--text-secondary);font-size:0.75em;">😴 Spokój...</span>';
+        bar.style.background = 'var(--text-secondary)';
+    } else if (pct < 0.75) {
+        el.innerHTML = '<span style="color:var(--accent-secondary);font-size:0.75em;">👁 Coś się dzieje...</span>';
+        bar.style.background = 'var(--accent-secondary)';
+    } else {
+        el.innerHTML = '<span style="color:var(--accent-primary);font-size:0.75em;">⚡ Lada chwila!</span>';
+        bar.style.background = 'var(--accent-primary)';
+    }
+}
+
 function startGameLoop() {
     if (gameLoopInterval) clearInterval(gameLoopInterval);
     gameLoopInterval = setInterval(function() {
@@ -374,7 +498,6 @@ function startGameLoop() {
 
 function tick() {
     gameState.time.hour++;
-    gameState.lastEventCheck++;
 
     if (gameState.time.hour >= 24) {
         gameState.time.hour = 0;
@@ -399,11 +522,9 @@ function tick() {
         if (gameState.comfortCooldowns[id] <= 0) delete gameState.comfortCooldowns[id];
     });
 
-    // Event trigger
-    if (gameState.lastEventCheck >= 3 && Math.random() < 0.15) {
-        triggerRandomEvent();
-        gameState.lastEventCheck = 0;
-    }
+    // EVENT PACING — real-time based, speed-aware
+    maybeFireEvent();
+    updatePacingIndicator();
 
     if (gameState.totalDays % 6 === 0) checkAchievements();
 
@@ -466,6 +587,10 @@ function dailyCycle() {
     if (gameState.debt > 0) gameState.debt += Math.floor(gameState.debt * 0.0008);
 
     updateAverageMorale();
+
+    // Reset daily event budget and decay fatigue overnight
+    gameState.eventPacing.dailyEventCount = 0;
+    gameState.eventPacing.eventFatigue = Math.max(0, gameState.eventPacing.eventFatigue - 40);
 
     if (gameState.totalDays > 0 && gameState.totalDays % 7 === 0) {
         showWeeklyReport();
