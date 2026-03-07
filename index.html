@@ -6,10 +6,12 @@
     <title>Gakuen Empire Idle</title>
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/expansion.css">
+    <link rel="stylesheet" href="css/cities.css">
 </head>
 <body>
 <div id="toast-container"></div>
 
+<!-- WEEKLY REPORT -->
 <div id="weekly-modal" class="modal">
     <div class="modal-content" style="max-width:700px;">
         <h3 id="weekly-title">📊 Tygodniowy Raport</h3>
@@ -18,6 +20,7 @@
     </div>
 </div>
 
+<!-- ACHIEVEMENT POPUP -->
 <div id="achievement-modal" class="modal">
     <div class="modal-content" style="max-width:500px;text-align:center;">
         <div style="font-size:4em;" id="ach-icon">🏆</div>
@@ -27,10 +30,30 @@
     </div>
 </div>
 
+<!-- MILESTONE POPUP -->
+<div id="milestone-modal" class="modal">
+    <div class="modal-content" style="max-width:480px;text-align:center;">
+        <div style="font-size:3em;" id="milestone-icon">💗</div>
+        <h3 id="milestone-title" style="margin:10px 0;"></h3>
+        <p id="milestone-girl" style="color:var(--accent-secondary);font-size:1.1em;font-weight:bold;"></p>
+        <p id="milestone-desc" style="color:var(--text-secondary);margin-top:10px;font-style:italic;"></p>
+        <button onclick="closeMilestoneModal()" class="action-btn" style="margin-top:20px;">Zamknij</button>
+    </div>
+</div>
+
+<!-- GIRL PROFILE MODAL -->
+<div id="girl-profile-modal" class="modal">
+    <div class="modal-content" style="max-width:600px;">
+        <div id="girl-profile-content"></div>
+        <button onclick="closeGirlProfile()" class="action-btn" style="margin-top:20px;background:rgba(255,255,255,0.1);">Zamknij</button>
+    </div>
+</div>
+
+<!-- LEFT MENU -->
 <div id="left-menu">
     <div class="menu-header">
         <h1>Gakuen Empire</h1>
-        <div style="font-size:0.75em;opacity:0.8;margin-top:4px;">Seiran Academy</div>
+        <div style="font-size:0.75em;opacity:0.8;margin-top:4px;" id="menu-school-label">Seiran Academy</div>
     </div>
     <div class="menu-section time-display">
         <div class="stat-row"><span class="label">Godzina:</span><span id="current-hour">08:00</span></div>
@@ -52,6 +75,7 @@
         <button class="nav-btn active" data-page="dashboard">📊 Dashboard</button>
         <button class="nav-btn" data-page="girls">👥 Dziewczyny</button>
         <button class="nav-btn" data-page="npcs">🎭 Kontakty</button>
+        <button class="nav-btn" data-page="cities">🗺️ Miasta</button>
         <button class="nav-btn" data-page="school">🏫 Szkoła</button>
         <button class="nav-btn" data-page="business">💼 Biznes</button>
         <button class="nav-btn" data-page="achievements">🏆 Osiągnięcia</button>
@@ -73,10 +97,12 @@
     </div>
 </div>
 
+<!-- MAIN CONTENT -->
 <div id="main-content">
 
+    <!-- DASHBOARD -->
     <div id="page-dashboard" class="page active">
-        <h2>Dashboard – Seiran Academy</h2>
+        <h2 id="dash-title">Dashboard – Seiran Academy</h2>
         <div class="dashboard-grid">
             <div class="dashboard-card">
                 <h3>📋 Status Finansowy</h3>
@@ -96,10 +122,8 @@
                 <div id="income-breakdown" style="font-size:0.9em;"></div>
             </div>
             <div class="dashboard-card">
-                <h3>👥 Zespół</h3>
-                <p style="font-size:2.2em;font-weight:bold;color:var(--accent-primary);" id="active-girls">0/0</p>
-                <p id="team-morale-status" style="margin-top:8px;font-size:0.9em;"></p>
-                <p id="team-risk-status"  style="font-size:0.9em;"></p>
+                <h3>🗺️ Imperium</h3>
+                <div id="empire-summary"></div>
             </div>
             <div class="dashboard-card">
                 <h3>🎭 Kluczowe Kontakty</h3>
@@ -108,38 +132,54 @@
         </div>
     </div>
 
+    <!-- GIRLS -->
     <div id="page-girls" class="page">
         <h2>👥 Zarządzanie Dziewczynami</h2>
+        <div id="girls-school-selector" style="margin-bottom:20px;"></div>
         <div id="girls-list"></div>
     </div>
 
+    <!-- NPC CONTACTS -->
     <div id="page-npcs" class="page">
         <h2>🎭 Kontakty i Relacje</h2>
         <p style="color:var(--text-secondary);margin-bottom:20px;">Kluczowe osoby, których stosunek do ciebie ma realne skutki w grze.</p>
         <div id="npcs-list"></div>
     </div>
 
+    <!-- CITIES MAP -->
+    <div id="page-cities" class="page">
+        <h2>🗺️ Mapa Imperium</h2>
+        <p style="color:var(--text-secondary);margin-bottom:20px;">Zarządzaj szkołami w różnych miastach. Każde miasto ma unikalną atmosferę, ryzyko i możliwości.</p>
+        <div id="cities-overview"></div>
+    </div>
+
+    <!-- SCHOOL -->
     <div id="page-school" class="page">
         <h2>🏫 Zarządzanie Szkołą</h2>
+        <div id="school-selector-bar" style="margin-bottom:20px;"></div>
         <div id="school-investments"></div>
     </div>
 
+    <!-- BUSINESS -->
     <div id="page-business" class="page">
         <h2>💼 Operacje Biznesowe</h2>
         <div id="business-operations"></div>
     </div>
 
+    <!-- ACHIEVEMENTS -->
     <div id="page-achievements" class="page">
         <h2>🏆 Osiągnięcia</h2>
         <p id="ach-progress" style="color:var(--text-secondary);margin-bottom:20px;"></p>
         <div id="achievements-list" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:15px;"></div>
     </div>
 
+    <!-- EVENT LOG -->
     <div id="page-events" class="page">
         <h2>📰 Dziennik Wydarzeń</h2>
         <div id="events-log"></div>
     </div>
 
+    <!-- OPTIONS -->
     <div id="page-options" class="page">
         <h2>⚙️ Opcje</h2>
         <div style="max-width:600px;">
@@ -149,8 +189,10 @@
             <button id="reset-game" class="action-btn" style="background:var(--danger);">🔄 Resetuj Grę</button>
         </div>
     </div>
-</div>
 
+</div><!-- end main-content -->
+
+<!-- EVENT MODAL -->
 <div id="event-modal" class="modal">
     <div class="modal-content">
         <h3 id="event-title"></h3>
@@ -159,6 +201,7 @@
     </div>
 </div>
 
+<!-- TRAINING MODAL -->
 <div id="training-modal" class="modal">
     <div class="modal-content">
         <h3 id="training-girl-name">Wybierz Trening</h3>
@@ -168,93 +211,154 @@
     </div>
 </div>
 
+<!-- SCRIPTS -->
 <script src="data/gamedata.js"></script>
 <script src="data/girls.js"></script>
 <script src="data/expansion.js"></script>
+<script src="data/cities.js"></script>
+<script src="data/girl_profiles.js"></script>
 <script src="js/events.js"></script>
 <script src="js/cbs.js"></script>
 <script src="js/save.js"></script>
 <script>
-
-let gameState = {
+// ============================================================================
+// GAME STATE
+// ============================================================================
+var gameState = {
     time: { hour: 8, dayOfWeek: 1, day: 1, month: 4, year: 2025 },
     money: 800000, debt: 5000000, reputation: 45, moraleTotal: 65,
-    girls: [], gameSpeed: 1, isPaused: true,
+    girls: [],          // GLOBAL pool — all girls across all schools
+    gameSpeed: 1, isPaused: true,
     yakuzaProtection: false, profitTax: 0, risk: 15,
-    unlockedJobs: ['none', 'school_dates', 'tutor'],
+    unlockedJobs: ['none','school_dates','tutor'],
     completedEvents: [], eventLog: [], eventCooldowns: {},
-    purchasedInvestments: [], nextGirlId: 4, lastEventCheck: 0,
+    purchasedInvestments: [], nextGirlId: 1, lastEventCheck: 0,
     comfortCooldowns: {},
     npcRelationships: {},
     earnedAchievements: [],
     weeklyStats: { income: 0, events: 0, trained: 0 },
-    totalDays: 0
+    totalDays: 0,
+    // MULTI-SCHOOL/CITY
+    activeSchoolId: 'seiran_academy',   // which school is currently shown
+    schools: {},                        // schoolId -> { reputation, risk, purchasedInvestments, girlIds[] }
+    unlockedCities: ['tokyo'],
+    unlockedSchools: ['seiran_academy'],
+    milestonesShown: []                 // girl.id + milestone.id combos shown
 };
 
 const TIME_PER_TICK_MS = 3000;
-let gameLoopInterval;
-let achievementQueue = [];
+var gameLoopInterval;
+var achievementQueue = [];
+var milestoneQueue = [];
+
+// ============================================================================
+// SCHOOL STATE HELPERS
+// ============================================================================
+function getSchool(schoolId) {
+    schoolId = schoolId || gameState.activeSchoolId;
+    if (!gameState.schools[schoolId]) {
+        var tmpl = SCHOOL_TEMPLATES[schoolId];
+        gameState.schools[schoolId] = {
+            reputation: tmpl ? tmpl.baseReputation : 45,
+            risk: 15,
+            purchasedInvestments: [],
+            girlIds: []
+        };
+    }
+    return gameState.schools[schoolId];
+}
+
+function getSchoolGirls(schoolId) {
+    schoolId = schoolId || gameState.activeSchoolId;
+    var school = getSchool(schoolId);
+    return gameState.girls.filter(function(g){ return school.girlIds.includes(g.id); });
+}
+
+function getActiveCity() {
+    var tmpl = SCHOOL_TEMPLATES[gameState.activeSchoolId];
+    return tmpl ? tmpl.cityId : 'tokyo';
+}
+
+function getCityMultiplier(cityId, type) {
+    var city = CITIES_DATA[cityId];
+    if (!city) return 1.0;
+    return city[type + 'Multiplier'] || 1.0;
+}
 
 // ============================================================================
 // INIT
 // ============================================================================
 function initGame() {
-    // Merge expansion data into base arrays/objects
-    Object.assign(JOBS_DATA, JOBS_DATA_EXPANSION);
-    EVENTS_DATA.push(...EVENTS_DATA_EXPANSION);
-    SCHOOL_INVESTMENTS.push(...SCHOOL_INVESTMENTS_EXPANSION);
-    Object.keys(BACKSTORIES_EXPANSION).forEach(k => {
-        BACKSTORIES[k] = [...(BACKSTORIES[k] || []), ...BACKSTORIES_EXPANSION[k]];
+    // Merge all data
+    Object.assign(JOBS_DATA, JOBS_DATA_EXPANSION, CITY_JOBS);
+    EVENTS_DATA.push.apply(EVENTS_DATA, EVENTS_DATA_EXPANSION);
+    EVENTS_DATA.push.apply(EVENTS_DATA, CITY_EVENTS_DATA);
+    EVENTS_DATA.push.apply(EVENTS_DATA, GIRL_PERSONAL_EVENTS);
+    SCHOOL_INVESTMENTS.push.apply(SCHOOL_INVESTMENTS, SCHOOL_INVESTMENTS_EXPANSION);
+
+    Object.keys(BACKSTORIES_EXPANSION).forEach(function(k) {
+        BACKSTORIES[k] = (BACKSTORIES[k]||[]).concat(BACKSTORIES_EXPANSION[k]);
     });
 
-    // Init NPC relationships from NPC_DATA defaults
-    Object.keys(NPC_DATA).forEach(id => {
+    // Init NPC relationships
+    Object.keys(NPC_DATA).forEach(function(id) {
         if (gameState.npcRelationships[id] === undefined)
             gameState.npcRelationships[id] = NPC_DATA[id].initialRelationship;
     });
 
-    gameState.girls = [generateRandomGirl(), generateRandomGirl()];
+    // Init school state for starting school
+    getSchool('seiran_academy');
+
+    // Generate starting girls
+    var g1 = generateRandomGirl();
+    var g2 = generateRandomGirl();
+    gameState.girls.push(g1, g2);
+    getSchool('seiran_academy').girlIds.push(g1.id, g2.id);
+
     updateAverageMorale();
     updateAll();
     setupUI();
     startGameLoop();
-    console.log("✅ Gakuen Empire – Expanded Edition ready!");
+    console.log('✅ Gakuen Empire loaded — multi-city edition');
 }
 
+// ============================================================================
+// UI SETUP
+// ============================================================================
 function setupUI() {
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.onclick = () => {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav-btn').forEach(function(btn) {
+        btn.onclick = function() {
+            document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+            document.querySelectorAll('.nav-btn').forEach(function(b){ b.classList.remove('active'); });
             document.getElementById('page-' + btn.dataset.page).classList.add('active');
             btn.classList.add('active');
-            if (btn.dataset.page === 'girls')        { renderGirls(); lastGirlsRender = Date.now(); }
-            if (btn.dataset.page === 'events')       renderEventLog();
-            if (btn.dataset.page === 'school')       renderSchool();
-            if (btn.dataset.page === 'business')     renderBusiness();
-            if (btn.dataset.page === 'npcs')         renderNPCs();
-            if (btn.dataset.page === 'achievements') renderAchievements();
+            var p = btn.dataset.page;
+            if (p==='girls')        { lastGirlsRender = 0; renderGirls(); }
+            if (p==='events')       renderEventLog();
+            if (p==='school')       renderSchool();
+            if (p==='business')     renderBusiness();
+            if (p==='npcs')         renderNPCs();
+            if (p==='achievements') renderAchievements();
+            if (p==='cities')       renderCities();
         };
     });
-    document.getElementById('pause-btn').onclick = () => {
+
+    document.getElementById('pause-btn').onclick = function() {
         gameState.isPaused = !gameState.isPaused;
         document.getElementById('pause-btn').textContent = gameState.isPaused ? '▶ Start' : '⏸ Pauza';
     };
-    ['1','10','30','100'].forEach(s => {
-        document.getElementById('speed-' + s + 'x').onclick = () => {
+    ['1','10','30','100'].forEach(function(s) {
+        document.getElementById('speed-' + s + 'x').onclick = function() {
             gameState.gameSpeed = parseInt(s);
-            document.querySelectorAll('.time-btn:not(#pause-btn)').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.time-btn:not(#pause-btn)').forEach(function(b){ b.classList.remove('active'); });
             document.getElementById('speed-' + s + 'x').classList.add('active');
             startGameLoop();
         };
     });
-    document.getElementById('save-btn').onclick   = () => saveGame();
-    document.getElementById('load-btn').onclick   = () => loadGame();
-    document.getElementById('reset-game').onclick = () => {
-        if (confirm('Resetować grę? Wszystkie postępy zostaną utracone.')) {
-            localStorage.removeItem('gakuen_save');
-            location.reload();
-        }
+    document.getElementById('save-btn').onclick = function(){ saveGame(); };
+    document.getElementById('load-btn').onclick = function(){ loadGame(); };
+    document.getElementById('reset-game').onclick = function() {
+        if (confirm('Resetować grę?')) { localStorage.removeItem('gakuen_save'); location.reload(); }
     };
 }
 
@@ -263,7 +367,7 @@ function setupUI() {
 // ============================================================================
 function startGameLoop() {
     if (gameLoopInterval) clearInterval(gameLoopInterval);
-    gameLoopInterval = setInterval(() => {
+    gameLoopInterval = setInterval(function() {
         if (!gameState.isPaused) tick();
     }, TIME_PER_TICK_MS / gameState.gameSpeed);
 }
@@ -285,51 +389,78 @@ function tick() {
         }
     }
 
-    for (let id in gameState.eventCooldowns) {
-        if (--gameState.eventCooldowns[id] <= 0) delete gameState.eventCooldowns[id];
-    }
-    for (let id in gameState.comfortCooldowns) {
-        if (--gameState.comfortCooldowns[id] <= 0) delete gameState.comfortCooldowns[id];
-    }
+    // Cooldown ticks
+    Object.keys(gameState.eventCooldowns).forEach(function(id) {
+        gameState.eventCooldowns[id]--;
+        if (gameState.eventCooldowns[id] <= 0) delete gameState.eventCooldowns[id];
+    });
+    Object.keys(gameState.comfortCooldowns).forEach(function(id) {
+        gameState.comfortCooldowns[id]--;
+        if (gameState.comfortCooldowns[id] <= 0) delete gameState.comfortCooldowns[id];
+    });
 
-    updateAll();
-
+    // Event trigger
     if (gameState.lastEventCheck >= 3 && Math.random() < 0.15) {
         triggerRandomEvent();
         gameState.lastEventCheck = 0;
     }
 
-    if (gameState.time.hour % 6 === 0) checkAchievements();
+    if (gameState.totalDays % 6 === 0) checkAchievements();
 
-    if (achievementQueue.length > 0 && !document.getElementById('achievement-modal').classList.contains('active')) {
-        showNextAchievement();
-    }
+    // Check girl milestones
+    checkAllGirlMilestones();
+
+    updateAll();
 }
 
 function dailyCycle() {
-    let income = 0;
-    gameState.girls.forEach(g => {
-        if (g.currentJob && g.currentJob !== 'none') {
-            income += calculateIncome(g, g.currentJob);
-            const job = JOBS_DATA[g.currentJob];
-            if (job.risk > 30) g.morale = Math.max(10, g.morale - Math.floor(job.risk / 20));
-            if (job.coverJob) gameState.risk = Math.max(0, gameState.risk - 1);
-            if (g.morale < 30) g.loyalty = Math.max(0, g.loyalty - 2);
-            else if (g.morale > 70) g.loyalty = Math.min(100, g.loyalty + 1);
+    var totalIncome = 0;
+
+    // Process ALL girls across ALL schools
+    gameState.girls.forEach(function(g) {
+        if (!g.currentJob || g.currentJob === 'none') return;
+
+        // Find which city this girl's school is in
+        var schoolId = findGirlSchool(g.id);
+        var cityId = schoolId ? (SCHOOL_TEMPLATES[schoolId] ? SCHOOL_TEMPLATES[schoolId].cityId : 'tokyo') : 'tokyo';
+        var cityIncomeMult = getCityMultiplier(cityId, 'income');
+
+        var income = Math.floor(calculateIncome(g, g.currentJob) * cityIncomeMult);
+        totalIncome += income;
+
+        var job = JOBS_DATA[g.currentJob];
+        if (job.risk > 30) g.morale = Math.max(10, g.morale - Math.floor(job.risk / 20));
+        if (job.coverJob) {
+            // Cover jobs reduce city-specific risk
+            var school = getSchool(schoolId);
+            if (school) school.risk = Math.max(0, (school.risk||15) - 1);
         }
+        if (g.morale < 30) g.loyalty = Math.max(0, g.loyalty - 2);
+        else if (g.morale > 70) g.loyalty = Math.min(100, g.loyalty + 1);
     });
 
-    gameState.weeklyStats.income += income;
+    gameState.weeklyStats.income += totalIncome;
 
-    if (income > 0) {
-        let afterTax = income;
+    // Apply overhead for each active school
+    var totalOverhead = 0;
+    gameState.unlockedSchools.forEach(function(sid) {
+        var tmpl = SCHOOL_TEMPLATES[sid];
+        if (tmpl && tmpl.monthlyOverhead) totalOverhead += Math.floor(tmpl.monthlyOverhead / 30);
+    });
+
+    if (totalIncome > 0) {
+        var afterTax = totalIncome;
         if (gameState.yakuzaProtection && gameState.profitTax > 0)
-            afterTax -= Math.floor(income * gameState.profitTax / 100);
+            afterTax -= Math.floor(totalIncome * gameState.profitTax / 100);
+        afterTax -= totalOverhead;
         gameState.money += afterTax;
-        if (gameState.yakuzaProtection && gameState.profitTax > 0)
-            logEvent('📊 Przychód: ¥' + afterTax.toLocaleString() + ' (podatek: ¥' + (income - afterTax).toLocaleString() + ')', 'income');
-        else
-            logEvent('📊 Dzienny przychód: ¥' + afterTax.toLocaleString(), 'income');
+
+        var msg = '📊 Przychód: ¥' + afterTax.toLocaleString();
+        if (totalOverhead > 0) msg += ' (koszty: -¥' + totalOverhead.toLocaleString() + ')';
+        logEvent(msg, 'income');
+    } else if (totalOverhead > 0) {
+        gameState.money -= totalOverhead;
+        logEvent('🏢 Koszty operacyjne: -¥' + totalOverhead.toLocaleString(), 'expense');
     }
 
     if (gameState.debt > 0) gameState.debt += Math.floor(gameState.debt * 0.0008);
@@ -343,85 +474,156 @@ function dailyCycle() {
     }
 }
 
+function findGirlSchool(girlId) {
+    for (var sid in gameState.schools) {
+        if (gameState.schools[sid].girlIds && gameState.schools[sid].girlIds.includes(girlId)) return sid;
+    }
+    return 'seiran_academy';
+}
+
 // ============================================================================
 // CALCULATIONS
 // ============================================================================
 function calculateIncome(girl, jobKey) {
-    const job = JOBS_DATA[jobKey];
+    var job = JOBS_DATA[jobKey];
     if (!job || job.baseIncome === 0) return 0;
-    let income = job.baseIncome;
+    var income = job.baseIncome;
     income *= (1 + girl.loyalty / 200);
     income *= (girl.morale / 100);
-    const req = job.requiredSkills || {};
-    for (let skill in req) { if (girl.skills[skill]) income *= (1 + girl.skills[skill] / 300); }
+    var req = job.requiredSkills || {};
+    for (var skill in req) { if (girl.skills[skill]) income *= (1 + girl.skills[skill] / 300); }
+    // Devotion income bonus
+    if (girl.incomeBonus) income *= (1 + girl.incomeBonus);
     return Math.floor(income);
 }
 
 function canAssignJob(girl, jobKey) {
-    const job = JOBS_DATA[jobKey];
+    var job = JOBS_DATA[jobKey];
     if (!job || !gameState.unlockedJobs.includes(jobKey)) return false;
     if (jobKey === 'none') return true;
+    // City-specific jobs
+    if (job.cityOnly) {
+        var schoolId = findGirlSchool(girl.id);
+        var cityId = SCHOOL_TEMPLATES[schoolId] ? SCHOOL_TEMPLATES[schoolId].cityId : 'tokyo';
+        if (cityId !== job.cityOnly) return false;
+    }
     if (girl.lewdness < (job.requiredLewdness || 0)) return false;
-    const req = job.requiredSkills || {};
-    for (let skill in req) { if ((girl.skills[skill] || 0) < req[skill]) return false; }
+    var req = job.requiredSkills || {};
+    for (var skill in req) { if ((girl.skills[skill]||0) < req[skill]) return false; }
     return true;
 }
 
 function updateAverageMorale() {
     if (!gameState.girls.length) { gameState.moraleTotal = 0; return; }
-    gameState.moraleTotal = Math.floor(gameState.girls.reduce((s, g) => s + g.morale, 0) / gameState.girls.length);
+    gameState.moraleTotal = Math.floor(gameState.girls.reduce(function(s,g){ return s+g.morale; }, 0) / gameState.girls.length);
 }
 
 function getReputationLabel(rep) {
-    if (rep >= 90) return { label: "Legenda",  color: "#f1c40f" };
-    if (rep >= 70) return { label: "Sławny",   color: "#e67e22" };
-    if (rep >= 50) return { label: "Znany",    color: "#3498db" };
-    if (rep >= 30) return { label: "Lokalny",  color: "#95a5a6" };
-    return             { label: "Nieznany", color: "#7f8c8d" };
+    if (rep >= 90) return { label: 'Legenda',  color: '#f1c40f' };
+    if (rep >= 70) return { label: 'Sławny',   color: '#e67e22' };
+    if (rep >= 50) return { label: 'Znany',    color: '#3498db' };
+    if (rep >= 30) return { label: 'Lokalny',  color: '#95a5a6' };
+    return             { label: 'Nieznany', color: '#7f8c8d' };
 }
 
 function getGirlBondLevel(loyalty) {
-    let level = GIRL_BOND_LEVELS[0];
-    for (const l of GIRL_BOND_LEVELS) { if (loyalty >= l.threshold) level = l; }
+    var level = GIRL_BOND_LEVELS[0];
+    GIRL_BOND_LEVELS.forEach(function(l){ if (loyalty >= l.threshold) level = l; });
     return level;
 }
 
 function getNPCRelLabel(val) {
-    let level = RELATIONSHIP_LEVELS[0];
-    for (const l of RELATIONSHIP_LEVELS) { if (val >= l.threshold) level = l; }
+    var level = RELATIONSHIP_LEVELS[0];
+    RELATIONSHIP_LEVELS.forEach(function(l){ if (val >= l.threshold) level = l; });
     return level;
 }
 
-// ============================================================================
-// NPC EFFECTS (called from events.js via applyUniversalEffects)
-// ============================================================================
 function applyNpcEffect(effect) {
     if (!effect || !effect.npc) return;
     if (gameState.npcRelationships[effect.npc] === undefined) gameState.npcRelationships[effect.npc] = 0;
     gameState.npcRelationships[effect.npc] = clamp(gameState.npcRelationships[effect.npc] + effect.value, -100, 100);
-    const npc = NPC_DATA[effect.npc];
-    const rel = getNPCRelLabel(gameState.npcRelationships[effect.npc]);
+    var npc = NPC_DATA[effect.npc];
+    var rel = getNPCRelLabel(gameState.npcRelationships[effect.npc]);
     logEvent('🎭 ' + (npc ? npc.name : effect.npc) + ': relacja → ' + rel.label, 'npc');
+}
+
+// ============================================================================
+// CITY UNLOCK (called from events system)
+// ============================================================================
+function unlockCity(cityId) {
+    if (gameState.unlockedCities.includes(cityId)) return;
+    gameState.unlockedCities.push(cityId);
+    var city = CITIES_DATA[cityId];
+    // Auto-create school for this city
+    var schoolId = city.schools[0];
+    if (!gameState.unlockedSchools.includes(schoolId)) {
+        gameState.unlockedSchools.push(schoolId);
+        getSchool(schoolId);  // init school state
+    }
+    showToast(city.emoji + ' ' + city.name + ' odblokowane!', 'success');
+}
+
+// ============================================================================
+// GIRL MILESTONE CHECKING
+// ============================================================================
+function checkAllGirlMilestones() {
+    gameState.girls.forEach(function(girl) {
+        var results = checkGirlMilestones(girl);
+        results.forEach(function(r) {
+            var key = girl.id + '_' + r.milestone.id;
+            if (!gameState.milestonesShown.includes(key)) {
+                gameState.milestonesShown.push(key);
+                milestoneQueue.push({ girl: girl, milestone: r.milestone });
+                logEvent('💗 ' + girl.name + ': ' + r.milestone.title, 'bond');
+            }
+        });
+    });
+    if (milestoneQueue.length > 0 && !document.getElementById('milestone-modal').classList.contains('active')) {
+        showNextMilestone();
+    }
+}
+
+function showNextMilestone() {
+    if (!milestoneQueue.length) return;
+    var item = milestoneQueue.shift();
+    var girl = item.girl;
+    var milestone = item.milestone;
+    var desc = milestone.description.replace(/\{girlName\}/g, girl.name);
+    document.getElementById('milestone-icon').textContent  = milestone.icon;
+    document.getElementById('milestone-title').textContent = milestone.title;
+    document.getElementById('milestone-girl').textContent  = girl.name;
+    document.getElementById('milestone-desc').textContent  = desc;
+    document.getElementById('milestone-modal').classList.add('active');
+    gameState.isPaused = true;
+    document.getElementById('pause-btn').textContent = '⏸ Pauza';
+}
+
+function closeMilestoneModal() {
+    document.getElementById('milestone-modal').classList.remove('active');
+    gameState.isPaused = false;
+    document.getElementById('pause-btn').textContent = '▶ Start';
+    if (milestoneQueue.length > 0) setTimeout(showNextMilestone, 500);
 }
 
 // ============================================================================
 // ACHIEVEMENTS
 // ============================================================================
 function checkAchievements() {
-    ACHIEVEMENTS_DATA.forEach(ach => {
+    ACHIEVEMENTS_DATA.forEach(function(ach) {
         if (gameState.earnedAchievements.includes(ach.id)) return;
         try {
             if (ach.condition(gameState)) {
                 gameState.earnedAchievements.push(ach.id);
                 achievementQueue.push(ach);
                 logEvent('🏆 Osiągnięcie: ' + ach.title, 'achievement');
+                if (!document.getElementById('achievement-modal').classList.contains('active')) showNextAchievement();
             }
-        } catch(e) { /* condition may reference undefined data */ }
+        } catch(e) {}
     });
 }
 
 function showNextAchievement() {
-    const ach = achievementQueue.shift();
+    var ach = achievementQueue.shift();
     if (!ach) return;
     document.getElementById('ach-icon').textContent  = ach.icon;
     document.getElementById('ach-title').textContent = ach.title;
@@ -432,28 +634,25 @@ function showNextAchievement() {
 
 function closeAchievementModal() {
     document.getElementById('achievement-modal').classList.remove('active');
+    if (achievementQueue.length) setTimeout(showNextAchievement, 500);
 }
 
 // ============================================================================
 // WEEKLY REPORT
 // ============================================================================
 function showWeeklyReport() {
-    const ws = gameState.weeklyStats;
-    const netIncome = gameState.yakuzaProtection
-        ? Math.floor(ws.income * (1 - gameState.profitTax / 100)) : ws.income;
-
-    document.getElementById('weekly-title').textContent =
-        '📊 Raport Tygodniowy – ' + gameState.time.day + '/' + gameState.time.month + '/' + gameState.time.year;
-
+    var ws = gameState.weeklyStats;
+    var netIncome = gameState.yakuzaProtection ? Math.floor(ws.income*(1-gameState.profitTax/100)) : ws.income;
+    document.getElementById('weekly-title').textContent = '📊 Raport Tygodniowy – ' + gameState.time.day + '/' + gameState.time.month;
     document.getElementById('weekly-body').innerHTML =
         '<div style="display:grid;grid-template-columns:1fr 1fr;gap:15px;margin:20px 0;">' +
         '<div class="dashboard-card" style="text-align:center;"><div style="font-size:1.8em;color:var(--accent-secondary);">¥' + netIncome.toLocaleString() + '</div><div style="color:var(--text-secondary)">Przychód netto</div></div>' +
         '<div class="dashboard-card" style="text-align:center;"><div style="font-size:1.8em;color:var(--accent-primary);">' + ws.events + '</div><div style="color:var(--text-secondary)">Wydarzeń</div></div>' +
-        '<div class="dashboard-card" style="text-align:center;"><div style="font-size:1.8em;color:' + (gameState.moraleTotal > 60 ? 'var(--success)' : 'var(--warning)') + ';">' + gameState.moraleTotal + '%</div><div style="color:var(--text-secondary)">Śr. Morale</div></div>' +
-        '<div class="dashboard-card" style="text-align:center;"><div style="font-size:1.8em;color:' + (gameState.risk > 60 ? 'var(--danger)' : 'var(--success)') + ';">' + gameState.risk + '%</div><div style="color:var(--text-secondary)">Ryzyko</div></div>' +
+        '<div class="dashboard-card" style="text-align:center;"><div style="font-size:1.8em;color:' + (gameState.moraleTotal>60?'var(--success)':'var(--warning)') + ';">' + gameState.moraleTotal + '%</div><div style="color:var(--text-secondary)">Śr. Morale</div></div>' +
+        '<div class="dashboard-card" style="text-align:center;"><div style="font-size:1.8em;color:' + (gameState.risk>60?'var(--danger)':'var(--success)') + ';">' + gameState.risk + '%</div><div style="color:var(--text-secondary)">Ryzyko</div></div>' +
         '</div><p style="color:var(--text-secondary);font-size:0.9em;">' +
-        (gameState.debt > 0 ? 'Pozostały dług: ¥' + gameState.debt.toLocaleString() : '✅ Dług spłacony!') + '</p>';
-
+        (gameState.debt>0 ? 'Pozostały dług: ¥' + gameState.debt.toLocaleString() : '✅ Dług spłacony!') + '</p>' +
+        '<p style="color:var(--text-secondary);font-size:0.9em;margin-top:8px;">Szkoły aktywne: ' + gameState.unlockedSchools.length + ' | Dziewczyny: ' + gameState.girls.length + '</p>';
     document.getElementById('weekly-modal').classList.add('active');
     gameState.isPaused = true;
     document.getElementById('pause-btn').textContent = '⏸ Pauza';
@@ -466,106 +665,91 @@ function closeWeeklyReport() {
 }
 
 // ============================================================================
-// TOAST NOTIFICATIONS
+// TOAST
 // ============================================================================
 function showToast(message, type) {
     type = type || 'info';
-    const container = document.getElementById('toast-container');
-    const toast = document.createElement('div');
+    var container = document.getElementById('toast-container');
+    var toast = document.createElement('div');
     toast.className = 'toast toast-' + type;
     toast.textContent = message;
     container.appendChild(toast);
-    setTimeout(function() { toast.classList.add('toast-show'); }, 10);
-    setTimeout(function() {
+    setTimeout(function(){ toast.classList.add('toast-show'); }, 10);
+    setTimeout(function(){
         toast.classList.remove('toast-show');
-        setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 400);
+        setTimeout(function(){ if (toast.parentNode) toast.parentNode.removeChild(toast); }, 400);
     }, 3500);
 }
 
 // ============================================================================
 // UI UPDATES
 // ============================================================================
-let lastGirlsRender = 0;
-const GIRLS_RENDER_COOLDOWN_MS = 1800;
+var lastGirlsRender = 0;
+var GIRLS_RENDER_COOLDOWN_MS = 1800;
 
 function updateAll() {
     updateTime();
     updateDashboard();
-    const now = Date.now();
-    if (document.getElementById('page-girls').classList.contains('active') &&
-        now - lastGirlsRender >= GIRLS_RENDER_COOLDOWN_MS) {
+    var now = Date.now();
+    if (document.getElementById('page-girls').classList.contains('active') && now - lastGirlsRender >= GIRLS_RENDER_COOLDOWN_MS) {
         renderGirls();
         lastGirlsRender = now;
     }
 }
 
 function updateTime() {
-    const days   = ['Ndz','Pon','Wt','Śr','Czw','Pt','Sob'];
-    const months = ['','Sty','Lut','Mar','Kwi','Maj','Cze','Lip','Sie','Wrz','Paź','Lis','Gru'];
+    var days   = ['Ndz','Pon','Wt','Śr','Czw','Pt','Sob'];
+    var months = ['','Sty','Lut','Mar','Kwi','Maj','Cze','Lip','Sie','Wrz','Paź','Lis','Gru'];
     document.getElementById('current-hour').textContent = String(gameState.time.hour).padStart(2,'0') + ':00';
     document.getElementById('current-day').textContent  = days[gameState.time.dayOfWeek];
     document.getElementById('current-date').textContent = gameState.time.day + ' ' + months[gameState.time.month] + ' ' + gameState.time.year;
+    // Update school label
+    var tmpl = SCHOOL_TEMPLATES[gameState.activeSchoolId];
+    if (tmpl) document.getElementById('menu-school-label').textContent = tmpl.emoji + ' ' + tmpl.name;
 }
 
 function updateDashboard() {
     document.getElementById('money').textContent = '¥' + gameState.money.toLocaleString();
     document.getElementById('debt').textContent  = '¥' + gameState.debt.toLocaleString();
-
-    const repInfo = getReputationLabel(gameState.reputation);
+    var repInfo = getReputationLabel(gameState.reputation);
     document.getElementById('reputation').textContent = gameState.reputation;
     var repLabelEl = document.getElementById('rep-label');
     repLabelEl.textContent = repInfo.label;
     repLabelEl.style.color = repInfo.color;
-
     document.getElementById('morale').textContent = gameState.moraleTotal + '%';
-
     var riskEl = document.getElementById('risk');
     riskEl.textContent = gameState.risk + '%';
-    riskEl.style.color = gameState.risk >= 70 ? 'var(--danger)' : gameState.risk >= 40 ? 'var(--warning)' : 'var(--success)';
-
-    var avg = gameState.girls.length ? gameState.girls.reduce(function(s,g){return s+g.grades;},0) / gameState.girls.length : 0;
+    riskEl.style.color = gameState.risk>=70?'var(--danger)':gameState.risk>=40?'var(--warning)':'var(--success)';
+    var avg = gameState.girls.length ? gameState.girls.reduce(function(s,g){return s+g.grades;},0)/gameState.girls.length : 0;
     document.getElementById('grades').textContent = avg.toFixed(1);
 
-    var grossIncome = gameState.girls.reduce(function(s,g){
-        return s + (g.currentJob !== 'none' ? calculateIncome(g,g.currentJob) : 0);
-    }, 0);
-    var taxAmount = (gameState.yakuzaProtection && gameState.profitTax > 0)
-        ? Math.floor(grossIncome * gameState.profitTax / 100) : 0;
+    var grossIncome = 0;
+    gameState.girls.forEach(function(g) {
+        if (g.currentJob !== 'none') {
+            var sid = findGirlSchool(g.id);
+            var cid = SCHOOL_TEMPLATES[sid] ? SCHOOL_TEMPLATES[sid].cityId : 'tokyo';
+            grossIncome += Math.floor(calculateIncome(g,g.currentJob) * getCityMultiplier(cid,'income'));
+        }
+    });
+    var taxAmount = (gameState.yakuzaProtection&&gameState.profitTax>0) ? Math.floor(grossIncome*gameState.profitTax/100) : 0;
     var netIncome = grossIncome - taxAmount;
-
     document.getElementById('daily-income').textContent = '¥' + grossIncome.toLocaleString();
-    document.getElementById('income-after-tax').textContent = taxAmount > 0
-        ? 'Po podatku: ¥' + netIncome.toLocaleString() + ' (-¥' + taxAmount.toLocaleString() + ')' : '';
-    document.getElementById('income-projection').textContent = grossIncome > 0
-        ? 'Miesięczna prognoza: ¥' + (netIncome * 30).toLocaleString() : '';
+    document.getElementById('income-after-tax').textContent = taxAmount>0 ? 'Po podatku: ¥' + netIncome.toLocaleString() + ' (-¥' + taxAmount.toLocaleString() + ')' : '';
+    document.getElementById('income-projection').textContent = grossIncome>0 ? 'Miesięczna prognoza: ¥' + (netIncome*30).toLocaleString() : '';
 
     var debtEl = document.getElementById('debt-payoff-estimate');
-    if (gameState.debt <= 0) {
-        debtEl.textContent = '✅ Dług spłacony!';
-        debtEl.style.color = 'var(--success)';
-    } else if (netIncome > 0) {
-        debtEl.textContent = 'Spłata długu za ~' + Math.ceil(gameState.debt / netIncome) + ' dni';
-        debtEl.style.color = 'var(--warning)';
-    } else {
-        debtEl.textContent = 'Brak przychodów – dług rośnie';
-        debtEl.style.color = 'var(--danger)';
-    }
+    if (gameState.debt<=0) { debtEl.textContent='✅ Dług spłacony!'; debtEl.style.color='var(--success)'; }
+    else if (netIncome>0) { debtEl.textContent='Spłata długu za ~' + Math.ceil(gameState.debt/netIncome) + ' dni'; debtEl.style.color='var(--warning)'; }
+    else { debtEl.textContent='Brak przychodów – dług rośnie'; debtEl.style.color='var(--danger)'; }
 
-    var active = gameState.girls.filter(function(g){return g.currentJob !== 'none';}).length;
-    document.getElementById('active-girls').textContent = active + '/' + gameState.girls.length;
-
-    document.getElementById('team-morale-status').innerHTML = 'Morale: <span style="color:' +
-        (gameState.moraleTotal>=60?'var(--success)':gameState.moraleTotal>=35?'var(--warning)':'var(--danger)') + '">' +
-        (gameState.moraleTotal>=60?'😊 Dobre':gameState.moraleTotal>=35?'😐 Średnie':'😰 Krytyczne') + '</span>';
-    document.getElementById('team-risk-status').innerHTML = 'Ryzyko: <span style="color:' +
-        (gameState.risk<=30?'var(--success)':gameState.risk<=60?'var(--warning)':'var(--danger)') + '">' +
-        (gameState.risk<=30?'🛡️ Bezpieczne':gameState.risk<=60?'⚠️ Podwyższone':'🚨 Krytyczne') + '</span>';
+    var active = gameState.girls.filter(function(g){return g.currentJob!=='none';}).length;
+    document.getElementById('active-girls') && (document.getElementById('active-girls').textContent = active + '/' + gameState.girls.length);
 
     var breakdown = {};
     gameState.girls.forEach(function(g) {
-        if (g.currentJob !== 'none') {
+        if (g.currentJob!=='none') {
             var job = JOBS_DATA[g.currentJob].name;
-            breakdown[job] = (breakdown[job]||0) + calculateIncome(g, g.currentJob);
+            breakdown[job] = (breakdown[job]||0) + calculateIncome(g,g.currentJob);
         }
     });
     var bText = '';
@@ -573,21 +757,20 @@ function updateDashboard() {
     document.getElementById('income-breakdown').innerHTML = bText || '<span style="color:var(--text-secondary)">Brak przychodów</span>';
 
     renderNPCSummary();
+    renderEmpireSummary();
 
-    var loreLines = [
-        "Tokio, 2025. Seiran Academy skrywa tajemnicę.",
-        "Każdy ma swój dług. Twój jest bardziej dosłowny.",
-        "Detektyw Mori przechodzi obok szkoły dwa razy dziennie.",
-        "Takeshi pyta o ciebie. To nie zawsze dobry znak.",
-        "Madame Hiroko ogłosiła nowe usługi w Roppongi.",
-        "Szum plotek krąży wśród uczennic. Pani Fujimoto się przysłuchuje."
-    ];
+    // Lore text
+    var activeCity = getActiveCity();
+    var city = CITIES_DATA[activeCity];
     var loreEl = document.getElementById('dash-lore-text');
-    if (!loreEl._loreSet) {
-        loreEl.textContent = loreLines[Math.floor(Math.random() * loreLines.length)];
+    var dashTitle = document.getElementById('dash-title');
+    var tmpl = SCHOOL_TEMPLATES[gameState.activeSchoolId];
+    if (dashTitle && tmpl) dashTitle.textContent = 'Dashboard – ' + tmpl.name;
+    if (loreEl && !loreEl._loreSet && city) {
+        var loreLines = city.flavorTexts;
+        loreEl.textContent = loreLines[Math.floor(Math.random()*loreLines.length)];
         loreEl._loreSet = true;
-        // refresh lore every ~5 real minutes at 1x speed
-        setTimeout(function(){ loreEl._loreSet = false; }, 300000);
+        setTimeout(function(){ loreEl._loreSet = false; }, 120000);
     }
 }
 
@@ -597,7 +780,7 @@ function renderNPCSummary() {
     var html = '';
     Object.keys(NPC_DATA).forEach(function(id) {
         var npc = NPC_DATA[id];
-        var val = gameState.npcRelationships[id] !== undefined ? gameState.npcRelationships[id] : npc.initialRelationship;
+        var val = gameState.npcRelationships[id]!==undefined ? gameState.npcRelationships[id] : npc.initialRelationship;
         var rel = getNPCRelLabel(val);
         html += '<div style="display:flex;justify-content:space-between;align-items:center;margin:6px 0;font-size:0.9em;">' +
             '<span>' + npc.portrait + ' ' + npc.name + '</span>' +
@@ -606,40 +789,226 @@ function renderNPCSummary() {
     el.innerHTML = html || '<p style="color:var(--text-secondary)">Brak kontaktów.</p>';
 }
 
+function renderEmpireSummary() {
+    var el = document.getElementById('empire-summary');
+    if (!el) return;
+    var html = '';
+    gameState.unlockedCities.forEach(function(cityId) {
+        var city = CITIES_DATA[cityId];
+        if (!city) return;
+        var cityGirls = gameState.girls.filter(function(g) {
+            var sid = findGirlSchool(g.id);
+            return SCHOOL_TEMPLATES[sid] && SCHOOL_TEMPLATES[sid].cityId === cityId;
+        });
+        var cityIncome = cityGirls.reduce(function(s,g) {
+            return s + (g.currentJob!=='none' ? Math.floor(calculateIncome(g,g.currentJob)*city.incomeMultiplier) : 0);
+        }, 0);
+        html += '<div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0;padding:8px;background:rgba(255,255,255,0.04);border-radius:4px;border-left:3px solid ' + city.color + ';">' +
+            '<span>' + city.emoji + ' <strong>' + city.name + '</strong> <span style="color:var(--text-secondary);font-size:0.85em;">(' + cityGirls.length + ' dziewczyn)</span></span>' +
+            '<span style="color:var(--accent-secondary);font-size:0.9em;">¥' + cityIncome.toLocaleString() + '/dzień</span></div>';
+    });
+    if (gameState.unlockedCities.length < Object.keys(CITIES_DATA).length) {
+        html += '<p style="color:var(--text-secondary);font-size:0.85em;margin-top:8px;">🔒 Nowe miasta czekają na odblokowanie...</p>';
+    }
+    el.innerHTML = html;
+}
+
+// ============================================================================
+// CITIES PAGE
+// ============================================================================
+function renderCities() {
+    var container = document.getElementById('cities-overview');
+    var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:20px;">';
+    Object.keys(CITIES_DATA).forEach(function(cityId) {
+        var city = CITIES_DATA[cityId];
+        var unlocked = gameState.unlockedCities.includes(cityId);
+        var schoolsHtml = '';
+        city.schools.forEach(function(sid) {
+            var tmpl = SCHOOL_TEMPLATES[sid];
+            if (!tmpl) return;
+            var schoolOwned = gameState.unlockedSchools.includes(sid);
+            var schoolGirls = getSchoolGirls(sid);
+            var school = getSchool(sid);
+            if (schoolOwned) {
+                var isActive = gameState.activeSchoolId === sid;
+                schoolsHtml += '<div style="background:rgba(255,255,255,0.05);border-radius:6px;padding:12px;margin:8px 0;border:1px solid ' + (isActive?city.color:'rgba(255,255,255,0.1)') + ';">' +
+                    '<div style="display:flex;justify-content:space-between;align-items:center;">' +
+                    '<strong>' + tmpl.emoji + ' ' + tmpl.name + '</strong>' +
+                    (isActive ? '<span style="color:' + city.color + ';font-size:0.85em;">● Aktywna</span>' :
+                        '<button onclick="switchActiveSchool(\'' + sid + '\')" class="action-btn" style="padding:4px 10px;font-size:0.8em;">Przełącz</button>') +
+                    '</div>' +
+                    '<p style="color:var(--text-secondary);font-size:0.85em;margin:6px 0;">Dziewczyny: ' + schoolGirls.length + ' / ' + tmpl.maxGirls + ' | Rep: ' + (school.reputation||tmpl.baseReputation) + '</p>' +
+                    '<button onclick="transferGirlUI(\'' + sid + '\')" class="action-btn" style="padding:4px 10px;font-size:0.8em;background:rgba(255,255,255,0.08);margin-top:4px;">Przenieś dziewczynę ➜</button>' +
+                    '</div>';
+            } else if (unlocked) {
+                schoolsHtml += '<div style="background:rgba(0,0,0,0.2);border-radius:6px;padding:12px;margin:8px 0;border:1px dashed rgba(255,255,255,0.2);">' +
+                    '<strong>🔒 ' + tmpl.name + '</strong>' +
+                    '<p style="color:var(--text-secondary);font-size:0.85em;margin:6px 0;">' + tmpl.description + '</p>' +
+                    '<p style="color:var(--accent-secondary);font-size:0.9em;">Koszt przejęcia: ¥' + tmpl.purchaseCost.toLocaleString() + '</p>' +
+                    (gameState.money >= tmpl.purchaseCost ?
+                        '<button onclick="buySchool(\'' + sid + '\')" class="action-btn" style="margin-top:8px;">Kup Szkołę</button>' :
+                        '<button class="action-btn" disabled style="margin-top:8px;">Za mało środków</button>') +
+                    '</div>';
+            }
+        });
+
+        html += '<div class="dashboard-card" style="border-color:' + (unlocked?city.color:'rgba(255,255,255,0.1)') + ';' + (!unlocked?'opacity:0.6;':'') + '">' +
+            '<div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">' +
+            '<span style="font-size:2.5em;">' + city.emoji + '</span>' +
+            '<div><h3 style="margin:0;color:' + city.color + ';">' + city.name + '</h3>' +
+            '<p style="color:var(--text-secondary);font-size:0.85em;margin:2px 0;">' + city.district + ' — ' + city.atmosphere + '</p></div>' +
+            (unlocked ? '<span style="margin-left:auto;font-size:0.85em;color:var(--success);">✅ Odblokowane</span>' :
+                '<span style="margin-left:auto;font-size:0.85em;color:var(--warning);">🔒 Zablokowane</span>') + '</div>' +
+            '<p style="font-size:0.9em;color:var(--text-secondary);margin-bottom:12px;font-style:italic;">' + city.description + '</p>' +
+            '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.85em;margin-bottom:12px;">' +
+            '<div>🚨 Policja: <strong>' + '★'.repeat(city.policeLevel) + '☆'.repeat(3-city.policeLevel) + '</strong></div>' +
+            '<div>🩸 Yakuza: <strong>' + '★'.repeat(city.yakuzaPresence) + '☆'.repeat(3-city.yakuzaPresence) + '</strong></div>' +
+            '<div>💰 Zarobki: <strong>×' + city.incomeMultiplier.toFixed(2) + '</strong></div>' +
+            '<div>⚠️ Ryzyko: <strong>×' + city.riskMultiplier.toFixed(2) + '</strong></div></div>' +
+            (unlocked ? schoolsHtml : '<p style="color:var(--text-secondary);font-size:0.85em;">Odblokuj przez wydarzenia fabularne.</p>' +
+                '<p style="font-size:0.85em;">Wymagania: ' + formatCityRequirements(city.unlockRequirements) + '</p>') +
+            '</div>';
+    });
+    html += '</div>';
+    container.innerHTML = html;
+}
+
+function formatCityRequirements(req) {
+    var parts = [];
+    if (req.minMoney) parts.push('¥' + req.minMoney.toLocaleString() + ' gotówki');
+    if (req.minGirls) parts.push(req.minGirls + ' dziewczyn');
+    if (req.minReputation) parts.push('reputacja ' + req.minReputation + '+');
+    return parts.join(', ') || 'Brak wymagań';
+}
+
+function switchActiveSchool(schoolId) {
+    if (!gameState.unlockedSchools.includes(schoolId)) return;
+    gameState.activeSchoolId = schoolId;
+    updateAll();
+    showToast('Przełączono na: ' + SCHOOL_TEMPLATES[schoolId].name, 'info');
+    renderCities();
+    if (document.getElementById('page-girls').classList.contains('active')) renderGirls();
+    if (document.getElementById('page-school').classList.contains('active')) renderSchool();
+}
+
+function buySchool(schoolId) {
+    var tmpl = SCHOOL_TEMPLATES[schoolId];
+    if (!tmpl || gameState.money < tmpl.purchaseCost) return;
+    gameState.money -= tmpl.purchaseCost;
+    gameState.unlockedSchools.push(schoolId);
+    getSchool(schoolId);
+    logEvent('🏫 Kupiono: ' + tmpl.name, 'unlock');
+    showToast('✅ ' + tmpl.name + ' jest twoja!', 'success');
+    renderCities();
+}
+
+function transferGirlUI(targetSchoolId) {
+    var sourceSchool = getSchool(gameState.activeSchoolId);
+    var sourceGirls = getSchoolGirls(gameState.activeSchoolId);
+    if (!sourceGirls.length) { showToast('Brak dziewczyn do przeniesienia.', 'warning'); return; }
+    var targetTmpl = SCHOOL_TEMPLATES[targetSchoolId];
+    var targetGirls = getSchoolGirls(targetSchoolId);
+    if (targetGirls.length >= (targetTmpl ? targetTmpl.maxGirls : 20)) { showToast('Cel szkoły jest pełna!', 'warning'); return; }
+
+    var names = sourceGirls.map(function(g){ return g.name; }).join(', ');
+    var choice = prompt('Przenieś dziewczynę do ' + targetTmpl.name + '.\nDziewczyny dostępne: ' + names + '\nWpisz imię i nazwisko:');
+    if (!choice) return;
+    var girl = sourceGirls.find(function(g){ return g.name.toLowerCase() === choice.toLowerCase(); });
+    if (!girl) { showToast('Nie znaleziono: ' + choice, 'warning'); return; }
+
+    // Transfer
+    sourceSchool.girlIds = sourceSchool.girlIds.filter(function(id){ return id !== girl.id; });
+    getSchool(targetSchoolId).girlIds.push(girl.id);
+    logEvent('✈️ ' + girl.name + ' przeniesiona do ' + targetTmpl.name, 'transfer');
+    showToast(girl.name + ' → ' + targetTmpl.name, 'info');
+    renderCities();
+    if (document.getElementById('page-girls').classList.contains('active')) { lastGirlsRender = 0; renderGirls(); }
+}
+
 // ============================================================================
 // GIRLS RENDER
 // ============================================================================
 function renderGirls() {
     var container = document.getElementById('girls-list');
-    if (!gameState.girls.length) {
-        container.innerHTML = '<p>Brak dziewczyn. Rekrutuj przez wydarzenia!</p>';
+
+    // School selector
+    var selectorHtml = '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;">';
+    gameState.unlockedSchools.forEach(function(sid) {
+        var tmpl = SCHOOL_TEMPLATES[sid];
+        var girls = getSchoolGirls(sid);
+        var isActive = gameState.activeSchoolId === sid;
+        var city = CITIES_DATA[tmpl.cityId];
+        selectorHtml += '<button onclick="switchActiveSchool(\'' + sid + '\')" class="action-btn" style="padding:8px 14px;' +
+            (isActive ? '' : 'background:rgba(255,255,255,0.07);') + '">' +
+            tmpl.emoji + ' ' + tmpl.name + ' <span style="opacity:0.7;font-size:0.85em;">(' + girls.length + ')</span></button>';
+    });
+    selectorHtml += '</div>';
+    document.getElementById('girls-school-selector').innerHTML = selectorHtml;
+
+    // Girls for active school
+    var girls = getSchoolGirls(gameState.activeSchoolId);
+    var activeCity = getActiveCity();
+    var city = CITIES_DATA[activeCity] || CITIES_DATA.tokyo;
+
+    if (!girls.length) {
+        container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-secondary);">' +
+            '<p style="font-size:2em;margin-bottom:12px;">' + (SCHOOL_TEMPLATES[gameState.activeSchoolId]||{emoji:'🏫'}).emoji + '</p>' +
+            '<p>Brak dziewczyn w ' + (SCHOOL_TEMPLATES[gameState.activeSchoolId]||{name:'tej szkole'}).name + '.</p>' +
+            '<p style="font-size:0.9em;margin-top:8px;">Rekrutuj przez wydarzenia lub przenieś z innej szkoły.</p></div>';
         return;
     }
+
     var html = '';
-    gameState.girls.forEach(function(g) {
-        var job    = JOBS_DATA[g.currentJob];
-        var income = calculateIncome(g, g.currentJob);
+    girls.forEach(function(g) {
+        var job    = JOBS_DATA[g.currentJob] || JOBS_DATA.none;
+        var income = Math.floor(calculateIncome(g, g.currentJob) * city.incomeMultiplier);
         var onComfortCooldown = !!gameState.comfortCooldowns[g.id];
         var bond   = getGirlBondLevel(g.loyalty);
 
         var statusBadge = '<span class="status-badge status-idle">😴 Wolna</span>';
         if (g.currentJob !== 'none') {
-            statusBadge = JOBS_DATA[g.currentJob].risk > 50
+            statusBadge = job.risk > 50
                 ? '<span class="status-badge status-danger">⚠️ Ryzykowna praca</span>'
                 : '<span class="status-badge status-working">💼 Pracuje</span>';
         }
         if (g.morale <= 20) statusBadge += ' <span class="status-badge status-stressed">😰 Wyczerpana</span>';
+        if (g.incomeBonus) statusBadge += ' <span class="status-badge" style="background:rgba(46,204,113,0.2);color:#2ecc71;">💖 Oddana</span>';
 
-        var traitTags = g.traits.map(function(t){ return '<span class="trait-tag">' + t + '</span>'; }).join(' ');
+        var traitTags = (g.traits||[]).map(function(t){ return '<span class="trait-tag">' + t + '</span>'; }).join(' ');
+
+        // Dynamic greeting
+        var greeting = g.profile ? getGirlGreeting(g) : '...';
+
+        // City income display
+        var cityLabel = city.incomeMultiplier !== 1.0 ?
+            ' <span style="color:' + city.color + ';font-size:0.8em;">(×' + city.incomeMultiplier.toFixed(1) + ' ' + city.name + ')</span>' : '';
+
+        // Milestone progress bar
+        var nextMilestone = null;
+        RELATIONSHIP_MILESTONES.forEach(function(m) {
+            if (g.loyalty < m.loyaltyThreshold && !nextMilestone) nextMilestone = m;
+        });
+        var milestoneHtml = '';
+        if (nextMilestone) {
+            var pct = Math.min(100, Math.floor(g.loyalty / nextMilestone.loyaltyThreshold * 100));
+            milestoneHtml = '<div style="margin:8px 0;font-size:0.82em;color:var(--text-secondary);">' +
+                'Następna więź: ' + nextMilestone.icon + ' ' + nextMilestone.title + ' (' + pct + '%)' +
+                '<div class="progress-bar" style="height:4px;margin-top:3px;"><div class="progress-fill" style="width:' + pct + '%;background:#9b59b6;"></div></div></div>';
+        } else {
+            milestoneHtml = '<div style="font-size:0.82em;color:var(--success);margin:8px 0;">💖 Pełna więź osiągnięta</div>';
+        }
 
         html += '<div class="girl-card">' +
             '<div style="display:flex;justify-content:space-between;align-items:flex-start;">' +
-            '<h3>' + g.name + ' <span style="font-size:0.7em;color:var(--text-secondary)">(' + g.age + ' lat)</span></h3>' +
+            '<h3 style="cursor:pointer;" onclick="openGirlProfile(' + g.id + ')">' + g.name +
+            ' <span style="font-size:0.7em;color:var(--text-secondary)">(' + g.age + ' lat)</span></h3>' +
             '<span class="bond-badge" title="Więź">' + bond.icon + ' ' + bond.label + '</span></div>' +
-            '<div style="margin:4px 0 8px 0;">' + statusBadge + '</div>' +
+            '<div style="margin:4px 0 6px 0;">' + statusBadge + '</div>' +
             '<p><strong>' + g.personality + '</strong></p>' +
-            '<p style="font-size:0.85em;color:var(--text-secondary);font-style:italic;">' + g.backstory + '</p>' +
+            '<p style="font-size:0.85em;color:var(--text-secondary);font-style:italic;margin:4px 0;">' + g.backstory + '</p>' +
+            '<p style="font-size:0.85em;color:var(--accent-secondary);font-style:italic;margin:4px 0 8px 0;">"' + greeting + '"</p>' +
             '<p style="font-size:0.85em;margin-top:4px;">Cechy: ' + traitTags + '</p>' +
+            milestoneHtml +
             '<div class="girl-stats">' +
             renderStat('Lojalność', g.loyalty, false, g.loyalty>=80?'stat-high':g.loyalty<=30?'stat-low':'') +
             renderStat('Lewdness',  g.lewdness) +
@@ -650,23 +1019,101 @@ function renderGirls() {
             renderSkills(g.skills) + '</details>' +
             '<hr style="margin:12px 0;border-color:rgba(255,255,255,0.1);">' +
             '<p><strong>Praca:</strong> ' + job.name + '</p>' +
-            '<p><strong>Dochód/dzień:</strong> <span style="color:var(--accent-secondary)">¥' + income.toLocaleString() + '</span></p>' +
+            '<p><strong>Dochód/dzień:</strong> <span style="color:var(--accent-secondary)">¥' + income.toLocaleString() + '</span>' + cityLabel + '</p>' +
             '<select onchange="changeJob(' + g.id + ', this.value)" style="width:100%;padding:8px;margin:10px 0;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.2);color:var(--text-primary);border-radius:4px;">' +
             Object.keys(JOBS_DATA).filter(function(j){ return gameState.unlockedJobs.includes(j); }).map(function(j) {
                 var canDo = canAssignJob(g, j);
                 return '<option value="' + j + '"' + (g.currentJob===j?' selected':'') + (!canDo?' disabled':'') + '>' + JOBS_DATA[j].name + (!canDo?' (🔒)':'') + '</option>';
             }).join('') + '</select>' +
-            Object.keys(JOBS_DATA).filter(function(j){ return j!=='none' && !gameState.unlockedJobs.includes(j); }).map(function(j) {
-                return '<p style="font-size:0.8em;color:var(--text-secondary);">🔒 ' + JOBS_DATA[j].name + ' – odblokuj przez wydarzenia</p>';
-            }).join('') +
             '<div style="display:flex;gap:5px;margin-top:10px;flex-wrap:wrap;">' +
-            '<button onclick="openTrainingModal(' + g.id + ')" class="action-btn" style="flex:1;min-width:110px;">📚 Trenuj</button>' +
-            '<button onclick="comfortGirl(' + g.id + ')" class="action-btn" style="flex:1;min-width:110px;"' +
-            (g.morale>=90||onComfortCooldown?' disabled':'') + '>❤️ Pociesz ' +
-            (g.morale>=90?'(≥90%)':onComfortCooldown?'(cd)':'') + '</button>' +
+            '<button onclick="openGirlProfile(' + g.id + ')" class="action-btn" style="flex:1;min-width:90px;background:rgba(155,89,182,0.3);">👤 Profil</button>' +
+            '<button onclick="openTrainingModal(' + g.id + ')" class="action-btn" style="flex:1;min-width:90px;">📚 Trenuj</button>' +
+            '<button onclick="comfortGirl(' + g.id + ')" class="action-btn" style="flex:1;min-width:90px;"' +
+            (g.morale>=90||onComfortCooldown?' disabled':'') + '>❤️ Pociesz' +
+            (g.morale>=90?' (≥90%)':onComfortCooldown?' (cd)':'') + '</button>' +
             '</div></div>';
     });
     container.innerHTML = html;
+}
+
+// ============================================================================
+// GIRL PROFILE MODAL
+// ============================================================================
+function openGirlProfile(girlId) {
+    var girl = gameState.girls.find(function(g){ return g.id === girlId; });
+    if (!girl) return;
+    var bond = getGirlBondLevel(girl.loyalty);
+    var profile = girl.profile || {};
+    var schoolId = findGirlSchool(girlId);
+    var tmpl = SCHOOL_TEMPLATES[schoolId];
+    var city = CITIES_DATA[tmpl ? tmpl.cityId : 'tokyo'];
+
+    // Diary entry based on current state
+    var diaryCtx = girl.morale >= 70 ? 'high_morale' : girl.morale <= 35 ? 'low_morale' : null;
+    var diaryEntry = diaryCtx ? getGirlDiaryEntry(girl, diaryCtx) : null;
+
+    // Milestones achieved
+    var milestonesHtml = '';
+    if (girl.achievedMilestones && girl.achievedMilestones.length) {
+        RELATIONSHIP_MILESTONES.forEach(function(m) {
+            if (girl.achievedMilestones.includes(m.id)) {
+                milestonesHtml += '<span style="margin-right:8px;font-size:1.1em;" title="' + m.title + '">' + m.icon + '</span>';
+            }
+        });
+    } else {
+        milestonesHtml = '<span style="color:var(--text-secondary);font-size:0.85em;">Brak jeszcze</span>';
+    }
+
+    var html = '<div style="display:flex;align-items:flex-start;gap:20px;margin-bottom:20px;">' +
+        '<div style="width:80px;height:80px;background:linear-gradient(135deg,' + city.color + ',rgba(0,0,0,0.3));border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2em;flex-shrink:0;">' +
+        bond.icon + '</div>' +
+        '<div>' +
+        '<h3 style="margin:0;font-size:1.6em;">' + girl.name + '</h3>' +
+        '<p style="color:var(--text-secondary);margin:4px 0;">' + girl.personality + ' • ' + girl.age + ' lat</p>' +
+        '<p style="color:' + city.color + ';font-size:0.85em;">' + city.emoji + ' ' + (tmpl ? tmpl.name : '') + '</p>' +
+        '<p style="color:var(--text-secondary);font-style:italic;font-size:0.9em;margin-top:6px;">' + girl.backstory + '</p>' +
+        '</div></div>' +
+
+        '<hr style="border-color:rgba(255,255,255,0.1);margin:0 0 16px 0;">' +
+
+        (profile.quote ? '<div style="background:rgba(155,89,182,0.1);border-left:3px solid #9b59b6;padding:12px;border-radius:4px;margin-bottom:16px;font-style:italic;font-size:0.95em;">"' + profile.quote + '"</div>' : '') +
+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">' +
+        (profile.dream ? '<div><h4 style="color:var(--accent-secondary);margin:0 0 4px 0;">🌟 Marzenie</h4><p style="font-size:0.9em;color:var(--text-secondary);">' + profile.dream + '</p></div>' : '') +
+        (profile.fear  ? '<div><h4 style="color:var(--danger);margin:0 0 4px 0;">😨 Strach</h4><p style="font-size:0.9em;color:var(--text-secondary);">' + profile.fear + '</p></div>' : '') +
+        (profile.hobby ? '<div><h4 style="color:var(--success);margin:0 0 4px 0;">🎮 Hobby</h4><p style="font-size:0.9em;color:var(--text-secondary);">' + profile.hobby + '</p></div>' : '') +
+        (profile.favoriteFood ? '<div><h4 style="color:var(--warning);margin:0 0 4px 0;">🍜 Ulubione jedzenie</h4><p style="font-size:0.9em;color:var(--text-secondary);">' + profile.favoriteFood + '</p></div>' : '') +
+        (profile.secretTalent ? '<div style="grid-column:span 2;"><h4 style="color:#9b59b6;margin:0 0 4px 0;">✨ Ukryty talent</h4><p style="font-size:0.9em;color:var(--text-secondary);">' + profile.secretTalent + '</p></div>' : '') +
+        '</div>' +
+
+        '<div style="margin-bottom:16px;">' +
+        '<h4 style="color:var(--accent-secondary);margin:0 0 8px 0;">💗 Kamienie milowe więzi</h4>' +
+        milestonesHtml + '</div>' +
+
+        (diaryEntry ? '<div style="background:rgba(22,33,62,0.8);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:14px;margin-bottom:16px;">' +
+            '<h4 style="color:var(--text-secondary);margin:0 0 8px 0;font-size:0.9em;">📓 Dziennik (' + (diaryCtx==='high_morale'?'nastrój dobry':'nastrój niski') + ')</h4>' +
+            '<p style="font-style:italic;font-size:0.9em;line-height:1.6;">' + diaryEntry + '</p></div>' : '') +
+
+        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:0.9em;">' +
+        renderStatInline('Lojalność', girl.loyalty) +
+        renderStatInline('Morale', girl.morale) +
+        renderStatInline('Lewdness', girl.lewdness) +
+        renderStatInline('Oceny', girl.grades) +
+        '</div>';
+
+    document.getElementById('girl-profile-content').innerHTML = html;
+    document.getElementById('girl-profile-modal').classList.add('active');
+}
+
+function renderStatInline(label, value) {
+    var color = value >= 70 ? 'var(--success)' : value >= 40 ? 'var(--warning)' : 'var(--danger)';
+    return '<div style="background:rgba(255,255,255,0.04);padding:8px;border-radius:4px;">' +
+        '<div style="display:flex;justify-content:space-between;"><span style="color:var(--text-secondary)">' + label + '</span><span style="color:' + color + ';font-weight:bold;">' + value + '</span></div>' +
+        '<div class="progress-bar" style="height:4px;margin-top:4px;"><div class="progress-fill" style="width:' + value + '%;background:' + color + ';"></div></div></div>';
+}
+
+function closeGirlProfile() {
+    document.getElementById('girl-profile-modal').classList.remove('active');
 }
 
 function renderStat(label, value, noBar, extraClass) {
@@ -687,7 +1134,7 @@ function renderSkills(skills) {
 }
 
 // ============================================================================
-// TARGETED TRAINING MODAL
+// TRAINING MODAL
 // ============================================================================
 var trainingTargetId = null;
 
@@ -695,17 +1142,14 @@ function openTrainingModal(girlId) {
     trainingTargetId = girlId;
     var girl = gameState.girls.find(function(g){ return g.id===girlId; });
     if (!girl) return;
-
     document.getElementById('training-girl-name').textContent = 'Trening: ' + girl.name;
     var container = document.getElementById('training-options');
     var html = '';
-
     TRAINING_OPTIONS.forEach(function(opt) {
         var canAfford     = gameState.money >= opt.cost;
         var meetsLewdness = !opt.requiredLewdness || girl.lewdness >= opt.requiredLewdness;
         var disabled      = !canAfford || !meetsLewdness;
         var reason        = !canAfford ? 'Za mało ¥' : (!meetsLewdness ? 'Wymaga Lewdness ' + opt.requiredLewdness + '+' : '');
-
         html += '<div class="investment-card" style="' + (disabled?'opacity:0.5;':'') + '">' +
             '<div style="display:flex;justify-content:space-between;align-items:center;">' +
             '<strong>' + opt.name + '</strong>' +
@@ -731,36 +1175,16 @@ function executeTraining(optId) {
     var girl = gameState.girls.find(function(g){ return g.id===trainingTargetId; });
     var opt  = TRAINING_OPTIONS.find(function(o){ return o.id===optId; });
     if (!girl || !opt || gameState.money < opt.cost) return;
-
     gameState.money -= opt.cost;
     var e = opt.effects;
     var logParts = [];
-
     function rng(arr) { return arr[0] + Math.floor(Math.random()*(arr[1]-arr[0]+1)); }
-
     if (e.lewdness)    { var g1=rng(e.lewdness);    girl.lewdness=clamp(girl.lewdness+g1,0,100);    logParts.push('Lewdness +'+g1); }
     if (e.grades)      { var g2=rng(e.grades);      girl.grades=clamp(girl.grades+g2,0,100);        logParts.push('Oceny +'+g2); }
-    if (e.morale !== undefined) {
-        var g3 = Array.isArray(e.morale) ? rng(e.morale) : e.morale;
-        girl.morale=clamp(girl.morale+g3,0,100);
-        logParts.push('Morale '+(g3>0?'+':'')+g3);
-    }
+    if (e.morale !== undefined) { var g3=Array.isArray(e.morale)?rng(e.morale):e.morale; girl.morale=clamp(girl.morale+g3,0,100); logParts.push('Morale '+(g3>0?'+':'')+g3); }
     if (e.loyalty)     { var g4=rng(e.loyalty);     girl.loyalty=clamp(girl.loyalty+g4,0,100);      logParts.push('Lojalność +'+g4); }
-    if (e.randomSkill) {
-        var skills=Object.keys(girl.skills);
-        var sk=skills[Math.floor(Math.random()*skills.length)];
-        var g5=rng(e.randomSkill);
-        girl.skills[sk]=clamp(girl.skills[sk]+g5,0,100);
-        logParts.push(sk+' +'+g5);
-    }
-    if (e.skills) {
-        for (var skill in e.skills) {
-            var g6=rng(e.skills[skill]);
-            girl.skills[skill]=clamp((girl.skills[skill]||0)+g6,0,100);
-            logParts.push(skill+' +'+g6);
-        }
-    }
-
+    if (e.randomSkill) { var skills=Object.keys(girl.skills); var sk=skills[Math.floor(Math.random()*skills.length)]; var g5=rng(e.randomSkill); girl.skills[sk]=clamp(girl.skills[sk]+g5,0,100); logParts.push(sk+' +'+g5); }
+    if (e.skills) { for (var skill in e.skills) { var g6=rng(e.skills[skill]); girl.skills[skill]=clamp((girl.skills[skill]||0)+g6,0,100); logParts.push(skill+' +'+g6); } }
     gameState.weeklyStats.trained++;
     updateAverageMorale();
     logEvent('📚 ' + girl.name + ': ' + opt.name + ' – ' + logParts.join(', '), 'training');
@@ -779,6 +1203,7 @@ function changeJob(girlId, jobKey) {
         girl.currentJob = jobKey;
         logEvent(girl.name + ' → ' + JOBS_DATA[jobKey].name, 'job');
         showToast(girl.name + ' → ' + JOBS_DATA[jobKey].name, 'info');
+        lastGirlsRender = 0;
         renderGirls();
         updateDashboard();
     }
@@ -792,6 +1217,7 @@ function comfortGirl(girlId) {
     gameState.comfortCooldowns[girlId] = 24;
     updateAverageMorale();
     logEvent('❤️ Pocieszyłeś ' + girl.name, 'comfort');
+    lastGirlsRender = 0;
     renderGirls();
     updateDashboard();
 }
@@ -806,7 +1232,7 @@ function payDebt(amount) {
     updateDashboard();
     if (gameState.debt <= 0) {
         gameState.debt = 0;
-        alert('🎉 DŁUG SPŁACONY! Gratulacje!');
+        alert('🎉 DŁUG SPŁACONY! Gratulacje! Tokio należy do ciebie.');
         checkAchievements();
     }
 }
@@ -819,9 +1245,9 @@ function renderNPCs() {
     var html = '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:20px;">';
     Object.keys(NPC_DATA).forEach(function(id) {
         var npc = NPC_DATA[id];
-        var val = gameState.npcRelationships[id] !== undefined ? gameState.npcRelationships[id] : npc.initialRelationship;
+        var val = gameState.npcRelationships[id]!==undefined ? gameState.npcRelationships[id] : npc.initialRelationship;
         var rel = getNPCRelLabel(val);
-        var barWidth = Math.round((val + 100) / 2);
+        var barWidth = Math.round((val+100)/2);
         html += '<div class="dashboard-card">' +
             '<div style="display:flex;align-items:center;gap:15px;margin-bottom:12px;">' +
             '<span style="font-size:2.5em;">' + npc.portrait + '</span>' +
